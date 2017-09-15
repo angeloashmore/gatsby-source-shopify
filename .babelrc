@@ -5,6 +5,13 @@
     "transform-es2015-modules-commonjs",
     "transform-export-extensions",
     "transform-object-rest-spread",
-    "transform-runtime"
-  ]
+    "transform-runtime",
+  ],
+  "env": {
+    "test": {
+      "plugins": [
+        "rewire"
+      ]
+    }
+  }
 }
