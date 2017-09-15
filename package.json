@@ -1,0 +1,33 @@
+{
+  "name": "gatsby-source-shopfiy",
+  "version": "0.1.0",
+  "description": "Gatsby source plugin for building websites using Shopfiy as a data source",
+  "scripts": {
+    "build": "babel src --out-dir .",
+    "format": "prettier --write 'src/**/*'",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "npm run build -- --watch"
+  },
+  "homepage": "https://github.com/angeloashmore/gatsby-source-shopify",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angeloashmore/gatsby-source-shopify.git"
+  },
+  "keywords": [
+    "gatsby",
+    "gatsby-plugin",
+    "gatsby-source-plugin",
+    "shopify"
+  ],
+  "author": "Angelo Ashmore <angelo.ashmore@walltowall.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-export-extensions": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "prettier": "^1.7.0"
+  }
+}

@@ -1,0 +1,3 @@
+*.log
+/gatsby-node.js
+node_modules
