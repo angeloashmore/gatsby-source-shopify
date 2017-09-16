@@ -1,19 +1,20 @@
 import { sourceNodes, __RewireAPI__ as RewireAPI } from '../gatsby-node'
+import graphQLServer from './fixtures/server'
 
 const createClient = RewireAPI.__GetDependency__('createClient')
 
-const noop = () => {}
+const queryMock = jest.fn(graphQLServer)
+RewireAPI.__Rewire__('createGraphQLClient', () => ({ query: queryMock }))
 
-// Demo Shopify GraphQL shop
-const name = 'graphql'
-const token = '078bc5caa0ddebfa89cccb4a1baa1f5c'
+const name = 'name'
+const token = 'token'
 
 describe('createClient', () => {
   test('creates a Shopify GraphQL client', async () => {
     const client = createClient(name, token)
     const result = await client.query('{ shop { name } }')
 
-    expect(result).toEqual({ data: { shop: { name } } })
+    expect(result).toEqual({ data: { shop: { name: 'Hello World' } } })
   })
 })
 
@@ -25,14 +26,13 @@ describe('sourceNodes', () => {
   }
   const { boundActionCreators: { createNode } } = redux
 
-  test.skip('creates a Shopify GraphQL client using options', async () => {
-    const createClientMock = jest.fn(() => ({ query: noop }))
-    RewireAPI.__Rewire__('createClient', createClientMock)
+  beforeEach(() => {
+    queryMock.mockClear()
+  })
 
+  test('queries Shopify', async () => {
     await sourceNodes(redux, { name, token })
-    expect(createClientMock).toHaveBeenCalledWith(name, token)
-
-    RewireAPI.__ResetDependency__('createClient')
+    expect(queryMock).toHaveBeenCalled()
   })
 
   test('creates ShopifyProduct source nodes', async () => {

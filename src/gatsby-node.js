@@ -1,4 +1,7 @@
 import createGraphQLClient from 'graphql-client'
+import { ProductNode } from './nodes'
+
+const last = arr => arr[arr.length - 1]
 
 const createClient = (name, token) =>
   createGraphQLClient({
@@ -64,7 +67,7 @@ const getProducts = async (client, first = 100, after, aggregatedResponse) => {
     ? (aggregatedResponse = aggregatedResponse.concat(nodes))
     : (aggregatedResponse = nodes)
 
-  if (response.data.shop.products.pageInfo.hasNextPage)
+  if (edges.length && response.data.shop.products.pageInfo.hasNextPage)
     return getProducts(client, first, last(edges).cursor, aggregatedResponse)
 
   return aggregatedResponse
@@ -76,5 +79,5 @@ export const sourceNodes = async (
 ) => {
   const client = createClient(name, token)
   const products = await getProducts(client)
-  products.forEach(createNode)
+  products.forEach(product => createNode(ProductNode(product)))
 }
