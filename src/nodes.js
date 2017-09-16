@@ -2,6 +2,7 @@ import { createHash } from 'crypto'
 import camelCase from 'lodash.camelcase'
 import stringify from 'json-stringify-safe'
 import upperFirst from 'lodash.upperfirst'
+import pkg from '../package'
 
 const sourceId = '__SOURCE__'
 const typePrefix = 'Shopify'
@@ -21,7 +22,13 @@ export const ProductNode = obj =>
     ...obj,
     parent: sourceId,
     children: [],
+    fields: {},
     internal: {
       type: makeTypeName('Product'),
+      owner: pkg.name,
+      fieldOwners: Object.keys(obj).reduce((acc, curr) => {
+        acc[curr] = pkg.name
+        return acc
+      }, {})
     },
   })
