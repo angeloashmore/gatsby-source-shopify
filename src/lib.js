@@ -1,15 +1,24 @@
+import ExtendableError from 'es6-error'
 import { get, last } from 'lodash/fp'
 
-export const formatGraphQLError = ({ message, locations, paths }) => {
-  const locs = locations.map(loc => Object.values(loc).join(':')).join(', ')
-  return `${message} at ${locs} (${paths.join(' > ')})`
+export class GraphQLError extends ExtendableError {
+  constructor({ message, locations, fields }) {
+    let str = message
+
+    if (locations)
+      str += ` at ${locations.map(l => Object.values(l).join(':')).join(', ')}`
+
+    if (fields) str += ` (${fields.join(' > ')})`
+
+    super(str)
+  }
 }
 
 export const queryAll = async (
   client,
   path,
   query,
-  first = 100,
+  first = 250,
   after,
   aggregatedResponse,
 ) => {
@@ -21,7 +30,7 @@ export const queryAll = async (
     },
   )
 
-  if (errors) throw new Error(formatGraphQLError(errors[0]))
+  if (errors) throw new GraphQLError(errors[0])
 
   const edges = get([...path, 'edges'], data)
   const nodes = edges.map(edge => edge.node)

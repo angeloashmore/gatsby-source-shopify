@@ -1,6 +1,8 @@
 import createGraphQLClient from 'graphql-client'
+import { partial, pipe } from 'lodash/fp'
 import { queryAll } from './lib'
-import { ProductNode } from './nodes'
+import { ProductNode, ProductVariantNode } from './nodes'
+import { productsQuery } from './queries'
 
 const createClient = (name, token) =>
   createGraphQLClient({
@@ -15,40 +17,16 @@ export const sourceNodes = async (
   { name, token },
 ) => {
   const client = createClient(name, token)
-  const products = await queryAll(
-    client,
-    ['shop', 'products'],
-    `
-    query GetProducts($first: Int!, $after: String) {
-      shop {
-        products(first: $first, after: $after) {
-          pageInfo {
-            hasNextPage
-          }
-          edges {
-            cursor
-            node {
-              createdAt
-              description
-              descriptionHtml
-              handle
-              id
-              onlineStoreUrl
-              options {
-                id
-              }
-              productType
-              publishedAt
-              tags
-              title
-              updatedAt
-              vendor
-            }
-          }
-        }
-      }
-    }
-  `,
-  )
-  products.forEach(product => createNode(ProductNode(product)))
+  const products = await queryAll(client, ['shop', 'products'], productsQuery)
+  products.forEach(product => {
+    const productNode = ProductNode(product)
+
+    product.variants.edges.forEach(variant => {
+      const variantNode = ProductVariantNode(productNode, variant.node)
+      createNode(variantNode)
+      productNode.children.push(variantNode.id)
+    })
+
+    createNode(productNode)
+  })
 }

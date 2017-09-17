@@ -38,6 +38,7 @@
     "prettier": "^1.7.0"
   },
   "dependencies": {
+    "es6-error": "^4.0.2",
     "graphql-client": "^2.0.0",
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.4",

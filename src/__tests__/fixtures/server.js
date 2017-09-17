@@ -12,7 +12,7 @@ const genResolver = name =>
     parseLiteral: ast => (ast.kind === Kind.STRING ? ast.value : null),
   })
 
-const scalars = ['DateTime', 'HTML', 'URL']
+const scalars = ['DateTime', 'HTML', 'Money', 'URL']
 
 const schema = makeExecutableSchema({
   typeDefs: printSchema(buildClientSchema(schemaJSON.data)),
