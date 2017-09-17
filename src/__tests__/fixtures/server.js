@@ -1,43 +1,30 @@
 import { graphql, GraphQLScalarType } from 'graphql'
 import { buildClientSchema, printSchema } from 'graphql/utilities'
 import { makeExecutableSchema, addMockFunctionsToSchema } from 'graphql-tools'
+import zipObject from 'lodash.zipobject'
 import schemaJSON from './schema.json'
 
-const typeDefs = printSchema(buildClientSchema(schemaJSON.data))
+const identity = x => x
+const constantly = x => () => x
+const scalars = ['DateTime', 'HTML', 'URL']
 
-const genResolver = name => new GraphQLScalarType({
-  name,
-  description: '',
-  parseValue(value) {
-    return value
-  },
-  serialize(value) {
-    return value
-  },
-  parseLiteral(ast) {
-    if (ast.kind === Kind.STRING) {
-      return ast.value
-    }
-    return null
-  },
-})
+const genResolver = name =>
+  new GraphQLScalarType({
+    name,
+    parseValue: identity,
+    serialize: identity,
+    parseLiteral: ast => (ast.kind === Kind.STRING ? ast.value : null),
+  })
 
 const schema = makeExecutableSchema({
-  typeDefs,
-  resolvers: {
-    DateTime: genResolver('DateTime'),
-    HTML: genResolver('HTML'),
-    URL: genResolver('HTML'),
-  },
+  typeDefs: printSchema(buildClientSchema(schemaJSON.data)),
+  resolvers: zipObject(scalars, scalars.map(genResolver)),
 })
 
 addMockFunctionsToSchema({
-  mocks: {
-    DateTime: () => '',
-    HTML: () => '',
-    URL: () => ''
-  },
+  mocks: zipObject(scalars, scalars.map(constantly)),
   schema,
 })
 
-export default (query, variables) => graphql(schema, query, null, null, variables)
+export default (query, variables) =>
+  graphql(schema, query, null, null, variables)
