@@ -1,7 +1,9 @@
 import { createHash } from 'crypto'
 import { assoc, camelCase, constant, mapValues, upperFirst } from 'lodash/fp'
 import stringify from 'json-stringify-safe'
-import pkg from '../package'
+import readPkgUp from 'read-pkg-up'
+
+const { pkg } = readPkgUp.sync(__dirname)
 
 const sourceId = '__SOURCE__'
 const typePrefix = 'Shopify'
@@ -23,6 +25,6 @@ export const ProductNode = obj =>
     internal: {
       type: makeTypeName('Product'),
       owner: pkg.name,
-      fieldOwners: mapValues(constant(pkg.name), obj),
+      // fieldOwners: mapValues(constant(pkg.name), obj),
     },
   })

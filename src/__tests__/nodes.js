@@ -1,3 +1,5 @@
+import Joi from 'joi'
+import { nodeSchema } from 'gatsby/dist/joi-schemas/joi'
 import { isPlainObject } from 'lodash/fp'
 import { ProductNode, __RewireAPI__ as RewireAPI } from '../nodes'
 import server from './fixtures/server'
@@ -43,22 +45,11 @@ describe('ProductNode', () => {
     expect(isPlainObject(node)).toBe(true)
   })
 
-  test('contains the minimal Gatsby properties', () => {
-    expect(node).toMatchObject({
-      id: expect.any(String),
-      parent: expect.any(String),
-      children: expect.any(Array),
-      fields: expect.any(Object),
-      internal: expect.objectContaining({
-        contentDigest: expect.any(String),
-        type: expect.any(String),
-        owner: expect.any(String),
-        fieldOwners: expect.any(Object),
-      }),
-    })
+  test('is a valid node', () => {
+    expect(Joi.validate(node, nodeSchema).error).toBe(null)
   })
 
-  test('contains Shopify Product fields', () => {
+  test('contains Shopify Product fields when called with Product', () => {
     expect(node).toMatchObject({
       createdAt: expect.any(String),
       description: expect.any(String),
