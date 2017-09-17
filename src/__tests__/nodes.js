@@ -71,9 +71,7 @@ describe('ProductNode', () => {
       ]),
       productType: expect.any(String),
       publishedAt: expect.any(String),
-      tags: expect.arrayContaining([
-        expect.any(String),
-      ]),
+      tags: expect.arrayContaining([expect.any(String)]),
       title: expect.any(String),
       updatedAt: expect.any(String),
       vendor: expect.any(String),

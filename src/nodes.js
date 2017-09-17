@@ -29,6 +29,6 @@ export const ProductNode = obj =>
       fieldOwners: Object.keys(obj).reduce((acc, curr) => {
         acc[curr] = pkg.name
         return acc
-      }, {})
+      }, {}),
     },
   })
