@@ -36,7 +36,6 @@
     "prettier": "^1.7.0"
   },
   "dependencies": {
-    "crypto": "^1.0.1",
     "graphql-client": "^2.0.0",
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.4"
