@@ -1,7 +1,6 @@
 import createGraphQLClient from 'graphql-client'
+import { last } from 'lodash/fp'
 import { ProductNode } from './nodes'
-
-const last = arr => arr[arr.length - 1]
 
 const createClient = (name, token) =>
   createGraphQLClient({
@@ -11,9 +10,9 @@ const createClient = (name, token) =>
     },
   })
 
-const formatGraphQLErrors = ({ messages, locations, paths }) => {
+const formatGraphQLError = ({ message, locations, paths }) => {
   const locs = locations.map(loc => Object.values(loc).join(':')).join(', ')
-  return `${messages.join('\n')} at ${locs} (${paths.join(' > ')})`
+  return `${message} at ${locs} (${paths.join(' > ')})`
 }
 
 const getProducts = async (client, first = 100, after, aggregatedResponse) => {
@@ -58,7 +57,7 @@ const getProducts = async (client, first = 100, after, aggregatedResponse) => {
     },
   )
 
-  if (response.errors) throw new Error(formatGraphQLErrors(response.errors))
+  if (response.errors) throw new Error(formatGraphQLError(response.errors[0]))
 
   const { edges } = response.data.shop.products
   const nodes = edges.map(edge => edge.node)

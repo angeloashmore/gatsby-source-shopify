@@ -1,7 +1,6 @@
 import { createHash } from 'crypto'
-import camelCase from 'lodash.camelcase'
+import { assoc, camelCase, constant, mapValues, upperFirst } from 'lodash/fp'
 import stringify from 'json-stringify-safe'
-import upperFirst from 'lodash.upperfirst'
 import pkg from '../package'
 
 const sourceId = '__SOURCE__'
@@ -11,10 +10,8 @@ const digest = str =>
   createHash(`md5`)
     .update(str)
     .digest(`hex`)
-const withDigest = obj => {
-  obj.internal.contentDigest = digest(stringify(obj))
-  return obj
-}
+const withDigest = obj =>
+  assoc(['internal', 'contentDigest'], digest(stringify(obj)), obj)
 const makeTypeName = type => upperFirst(camelCase(`${typePrefix} ${type}`))
 
 export const ProductNode = obj =>
@@ -26,9 +23,6 @@ export const ProductNode = obj =>
     internal: {
       type: makeTypeName('Product'),
       owner: pkg.name,
-      fieldOwners: Object.keys(obj).reduce((acc, curr) => {
-        acc[curr] = pkg.name
-        return acc
-      }, {}),
+      fieldOwners: mapValues(constant(pkg.name), obj),
     },
   })

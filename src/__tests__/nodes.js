@@ -1,10 +1,11 @@
+import { isPlainObject } from 'lodash/fp'
 import { ProductNode, __RewireAPI__ as RewireAPI } from '../nodes'
 import server from './fixtures/server'
 
 const makeTypeName = RewireAPI.__GetDependency__('makeTypeName')
 
 describe('ProductNode', () => {
-  let product
+  let node
 
   beforeAll(async () => {
     const result = await server(`
@@ -35,15 +36,15 @@ describe('ProductNode', () => {
       }
     `)
 
-    product = result.data.shop.products.edges[0].node
+    node = ProductNode(result.data.shop.products.edges[0].node)
   })
 
   test('creates an object', () => {
-    expect(typeof ProductNode(product)).toBe('object')
+    expect(isPlainObject(node)).toBe(true)
   })
 
   test('contains the minimal Gatsby properties', () => {
-    expect(ProductNode(product)).toMatchObject({
+    expect(node).toMatchObject({
       id: expect.any(String),
       parent: expect.any(String),
       children: expect.any(Array),
@@ -58,7 +59,7 @@ describe('ProductNode', () => {
   })
 
   test('contains Shopify Product fields', () => {
-    expect(ProductNode(product)).toMatchObject({
+    expect(node).toMatchObject({
       createdAt: expect.any(String),
       description: expect.any(String),
       descriptionHtml: expect.any(String),
