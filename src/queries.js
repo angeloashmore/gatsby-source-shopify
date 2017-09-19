@@ -17,7 +17,7 @@ export const collectionsQuery = `
               id
               src
             }
-            products {
+            products(first: 250) {
               edges {
                 node {
                   id

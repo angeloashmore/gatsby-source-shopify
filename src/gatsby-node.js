@@ -12,20 +12,19 @@ const createClient = (name, token) =>
     },
   })
 
-export const sourceNodes = async (
-  { boundActionCreators: { createNode } },
-  { name, token },
-) => {
-  const client = createClient(name, token)
-
+const createCollections = async (client, createNode) => {
   const collections = await queryAll(
     client,
     ['shop', 'collections'],
     collectionsQuery,
   )
-  collections.forEach(pipe(CollectionNode, createNode))
 
+  collections.forEach(pipe(CollectionNode, createNode))
+}
+
+const createProducts = async (client, createNode) => {
   const products = await queryAll(client, ['shop', 'products'], productsQuery)
+
   products.forEach(product => {
     const productNode = ProductNode(product)
 
@@ -37,4 +36,14 @@ export const sourceNodes = async (
 
     createNode(productNode)
   })
+}
+
+export const sourceNodes = async (
+  { boundActionCreators: { createNode } },
+  { name, token },
+) => {
+  const client = createClient(name, token)
+
+  await createCollections(client, createNode)
+  await createProducts(client, createNode)
 }

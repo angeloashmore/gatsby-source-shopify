@@ -28,7 +28,7 @@ export const CollectionNode = obj_ => {
 
   delete obj.products
 
-  withDigest({
+  return withDigest({
     ...obj,
     parent: sourceId,
     children: obj_.products.edges.map(edge => edge.node.id),
