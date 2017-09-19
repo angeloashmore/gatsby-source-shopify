@@ -1,8 +1,8 @@
 import createGraphQLClient from 'graphql-client'
 import { partial, pipe } from 'lodash/fp'
 import { queryAll } from './lib'
-import { ProductNode, ProductVariantNode } from './nodes'
-import { productsQuery } from './queries'
+import { CollectionNode, ProductNode, ProductVariantNode } from './nodes'
+import { collectionsQuery, productsQuery } from './queries'
 
 const createClient = (name, token) =>
   createGraphQLClient({
@@ -17,6 +17,14 @@ export const sourceNodes = async (
   { name, token },
 ) => {
   const client = createClient(name, token)
+
+  const collections = await queryAll(
+    client,
+    ['shop', 'collections'],
+    collectionsQuery,
+  )
+  collections.forEach(pipe(CollectionNode, createNode))
+
   const products = await queryAll(client, ['shop', 'products'], productsQuery)
   products.forEach(product => {
     const productNode = ProductNode(product)

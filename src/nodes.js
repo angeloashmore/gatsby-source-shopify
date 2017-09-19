@@ -23,6 +23,24 @@ const withDigest = obj =>
   assoc(['internal', 'contentDigest'], digest(stringify(obj)), obj)
 const makeTypeName = type => upperFirst(camelCase(`${typePrefix} ${type}`))
 
+export const CollectionNode = obj_ => {
+  const obj = cloneDeep(obj_)
+
+  delete obj.products
+
+  withDigest({
+    ...obj,
+    parent: sourceId,
+    children: obj_.products.edges.map(edge => edge.node.id),
+    // fields: {},
+    internal: {
+      type: makeTypeName('Collection'),
+      owner: pkg.name,
+      // fieldOwners: mapValues(constant(pkg.name), obj),
+    },
+  })
+}
+
 export const ProductNode = obj_ => {
   const obj = cloneDeep(obj_)
 

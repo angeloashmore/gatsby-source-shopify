@@ -1,3 +1,38 @@
+export const collectionsQuery = `
+  query GetCollections($first: Int!, $after: String) {
+    shop {
+      collections(first: $first, after: $after) {
+        pageInfo {
+          hasNextPage
+        }
+        edges {
+          cursor
+          node {
+            description
+            descriptionHtml
+            handle
+            id
+            image {
+              altText
+              id
+              src
+            }
+            products {
+              edges {
+                node {
+                  id
+                }
+              }
+            }
+            title
+            updatedAt
+          }
+        }
+      }
+    }
+  }
+`
+
 export const productsQuery = `
   query GetProducts($first: Int!, $after: String) {
     shop {
