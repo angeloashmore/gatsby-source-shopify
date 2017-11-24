@@ -35,61 +35,48 @@ const prefixConflictingKeys = obj => {
 const makeId = (type, id) => `${typePrefix}__${upperFirst(type)}__${id}`
 const makeTypeName = type => upperFirst(camelCase(`${typePrefix} ${type}`))
 
-export const createNodeFactory = (type, overrides = () => ({}), middleware = identity) => (
+export const createNodeFactory = (type, middleware = identity) => (
   obj,
-  providedNodeOptions = {},
+  overrides = {},
 ) => {
-  const nodeOptions = Object.assign(
-    {
-      parent: sourceId,
-    },
-    providedNodeOptions,
-  )
-
   const clonedObj = cloneDeep(obj)
+  const safeObj = prefixConflictingKeys(clonedObj)
 
-  const middlewareModifiedObj = middleware(clonedObj)
-  const safeObj = prefixConflictingKeys(middlewareModifiedObj)
-
-  return withDigest({
+  let node = {
     ...safeObj,
     id: makeId(type, obj.id),
+    parent: sourceId,
     children: [],
     internal: {
       type: makeTypeName(type),
     },
-    ...overrides(clonedObj),
-    parent: nodeOptions.parent,
+  }
+
+  node = middleware(node)
+
+  return withDigest({
+    ...node,
+    ...overrides,
   })
 }
 
 export const CollectionNode = createNodeFactory(
   'Collection',
-  obj => {
-    if (!obj.products) return {}
-
-    return {
-      children: obj.products.edges.map(edge => makeId('Product', edge.node.id)),
+  node => {
+    if (node.products) {
+      node.children = node.products.edges.map(edge => makeId('Product', edge.node.id))
+      delete node.products
     }
-  },
-  obj => {
-    delete obj.products
-    return obj
+
+    return node
   }
 )
 
 export const ProductNode = createNodeFactory(
   'Product',
-  obj => {
-    if (!obj.variants) return {}
-
-    return {
-      children: obj.variants.edges.map(edge => makeId('ProductVariant', edge.node.id))
-    }
-  },
-  obj => {
-    if (obj.variants) {
-      const variants = obj.variants.edges.map(edge => edge.node)
+  node => {
+    if (node.variants) {
+      const variants = node.variants.edges.map(edge => edge.node)
       const variantPrices = variants
         .map(variant => Number.parseFloat(variant.price))
         .filter(Boolean)
@@ -98,12 +85,15 @@ export const ProductNode = createNodeFactory(
 
       // minPrice and maxPrice are wrapped in a string to comply with Shopify's
       // string-wrapped Money values.
-      obj.minPrice = `${minPrice}`
-      obj.maxPrice = `${maxPrice}`
+      node.minPrice = `${minPrice}`
+      node.maxPrice = `${maxPrice}`
+
+      node.children = variants.map(variant => makeId('ProductVariant', variant.id))
+
+      delete node.variants
     }
 
-    delete obj.variants
-    return obj
+    return node
   }
 )
 
