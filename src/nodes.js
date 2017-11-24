@@ -35,17 +35,10 @@ const prefixConflictingKeys = obj => {
 const makeId = (type, id) => `${typePrefix}__${upperFirst(type)}__${id}`
 const makeTypeName = type => upperFirst(camelCase(`${typePrefix} ${type}`))
 
-export const createNodeFactory = (type, providedFactoryOptions = {}) => (
+export const createNodeFactory = (type, overrides = () => ({}), middleware = identity) => (
   obj,
   providedNodeOptions = {},
 ) => {
-  const factoryOptions = Object.assign(
-    {
-      getChildren: () => [],
-      middleware: identity,
-    },
-    providedFactoryOptions,
-  )
   const nodeOptions = Object.assign(
     {
       parent: sourceId,
@@ -55,40 +48,46 @@ export const createNodeFactory = (type, providedFactoryOptions = {}) => (
 
   const clonedObj = cloneDeep(obj)
 
-  const children = factoryOptions.getChildren(clonedObj)
-
-  const middlewareModifiedObj = factoryOptions.middleware(clonedObj)
+  const middlewareModifiedObj = middleware(clonedObj)
   const safeObj = prefixConflictingKeys(middlewareModifiedObj)
 
   return withDigest({
     ...safeObj,
     id: makeId(type, obj.id),
-    parent: nodeOptions.parent,
-    children,
+    children: [],
     internal: {
       type: makeTypeName(type),
     },
+    ...overrides(clonedObj),
+    parent: nodeOptions.parent,
   })
 }
 
-export const CollectionNode = createNodeFactory('Collection', {
-  getChildren: obj =>
-    obj.products.edges.map(edge => makeId('Product', edge.node.id)),
-  middleware: obj => {
+export const CollectionNode = createNodeFactory(
+  'Collection',
+  obj => {
+    if (!obj.products) return {}
+
+    return {
+      children: obj.products.edges.map(edge => makeId('Product', edge.node.id)),
+    }
+  },
+  obj => {
     delete obj.products
     return obj
-  },
-})
+  }
+)
 
-export const ProductNode = createNodeFactory('Product', {
-  getChildren: obj => {
-    if (!obj.variants) return []
+export const ProductNode = createNodeFactory(
+  'Product',
+  obj => {
+    if (!obj.variants) return {}
 
-    return obj.variants.edges.map(edge =>
-      makeId('ProductVariant', edge.node.id),
-    )
+    return {
+      children: obj.variants.edges.map(edge => makeId('ProductVariant', edge.node.id))
+    }
   },
-  middleware: obj => {
+  obj => {
     if (obj.variants) {
       const variants = obj.variants.edges.map(edge => edge.node)
       const variantPrices = variants
@@ -105,7 +104,7 @@ export const ProductNode = createNodeFactory('Product', {
 
     delete obj.variants
     return obj
-  },
-})
+  }
+)
 
 export const ProductVariantNode = createNodeFactory('ProductVariant')
