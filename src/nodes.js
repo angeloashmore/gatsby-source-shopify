@@ -1,9 +1,13 @@
-import { createNodeFactory, makeId } from './nodeHelpers.js'
+import createNodeHelpers from 'gatsby-node-helpers'
+
+const { createNodeFactory, generateNodeId } = createNodeHelpers({
+  typePrefix: 'Shopify',
+})
 
 export const CollectionNode = createNodeFactory('Collection', node => {
   if (node.products) {
     node.children = node.products.edges.map(edge =>
-      makeId('Product', edge.node.id),
+      generateNodeId('Product', edge.node.id),
     )
     delete node.products
   }
@@ -26,7 +30,7 @@ export const ProductNode = createNodeFactory('Product', node => {
     node.maxPrice = `${maxPrice}`
 
     node.children = variants.map(variant =>
-      makeId('ProductVariant', variant.id),
+      generateNodeId('ProductVariant', variant.id),
     )
 
     delete node.variants

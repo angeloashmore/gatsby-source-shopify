@@ -3108,6 +3108,13 @@ gatsby-module-loader@^1.0.5:
     babel-runtime "^6.26.0"
     loader-utils "^0.2.16"
 
+gatsby-node-helpers@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/gatsby-node-helpers/-/gatsby-node-helpers-0.1.1.tgz#da06d5884e0a760cb26e1ef714a087db39bac2d4"
+  dependencies:
+    json-stringify-safe "^5.0.1"
+    lodash "^4.17.4"
+
 gatsby-react-router-scroll@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/gatsby-react-router-scroll/-/gatsby-react-router-scroll-1.0.1.tgz#2e0132807273e544f05bed016645b6e2dfe08c48"

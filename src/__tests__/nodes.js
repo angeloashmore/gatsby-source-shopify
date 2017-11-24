@@ -10,8 +10,7 @@ import {
 import server from './fixtures/server'
 import { collectionsQuery, productsQuery } from '../queries'
 
-const makeId = RewireAPI.__GetDependency__('makeId')
-const makeTypeName = RewireAPI.__GetDependency__('makeTypeName')
+const generateNodeId = RewireAPI.__GetDependency__('generateNodeId')
 
 describe('CollectionNode', () => {
   let node
@@ -101,7 +100,10 @@ describe('ProductVariantNode', () => {
     node = ProductVariantNode(
       result.data.shop.products.edges[0].node.variants.edges[0].node,
       {
-        parent: makeId('Product', result.data.shop.products.edges[0].node.id),
+        parent: generateNodeId(
+          'Product',
+          result.data.shop.products.edges[0].node.id,
+        ),
       },
     )
   })
