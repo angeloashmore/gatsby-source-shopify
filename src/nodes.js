@@ -35,7 +35,6 @@ export const CollectionNode = obj_ => {
     // fields: {},
     internal: {
       type: makeTypeName('Collection'),
-      owner: pkg.name,
       // fieldOwners: mapValues(constant(pkg.name), obj),
     },
   })
@@ -43,6 +42,18 @@ export const CollectionNode = obj_ => {
 
 export const ProductNode = obj_ => {
   const obj = cloneDeep(obj_)
+
+  if (obj.variants) {
+    const variants = obj.variants.edges.map(edge => edge.node)
+    const variantPrices = variants.map(variant => Number.parseFloat(variant.price)).filter(Boolean)
+    const minPrice = Math.min(...variantPrices) || 0
+    const maxPrice = Math.max(...variantPrices) || 0
+
+    // minPrice and maxPrice are wrapped in a string to comply with Shopify's
+    // string-wrapped Money values.
+    obj.minPrice = `${minPrice}`
+    obj.maxPrice = `${maxPrice}`
+  }
 
   delete obj.variants
 
@@ -53,7 +64,6 @@ export const ProductNode = obj_ => {
     // fields: {},
     internal: {
       type: makeTypeName('Product'),
-      owner: pkg.name,
       // fieldOwners: mapValues(constant(pkg.name), obj),
     },
   })
@@ -67,7 +77,6 @@ export const ProductVariantNode = (parent, obj) =>
     // fields: {},
     internal: {
       type: makeTypeName('ProductVariant'),
-      owner: pkg.name,
       // fieldOwners: mapValues(constant(pkg.name), obj),
     },
   })
