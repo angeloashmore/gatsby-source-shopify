@@ -4,16 +4,16 @@ import {
   camelCase,
   cloneDeep,
   constant,
+  identity,
   mapValues,
   upperFirst,
 } from 'lodash/fp'
 import stringify from 'json-stringify-safe'
-import readPkgUp from 'read-pkg-up'
-
-const { pkg } = readPkgUp.sync(__dirname)
 
 const sourceId = '__SOURCE__'
 const typePrefix = 'Shopify'
+const conflictFieldPrefix = `shopify`
+const restrictedNodeFields = [`id`, `children`, `parent`, `fields`, `internal`]
 
 const digest = str =>
   createHash(`md5`)
@@ -21,62 +21,91 @@ const digest = str =>
     .digest(`hex`)
 const withDigest = obj =>
   assoc(['internal', 'contentDigest'], digest(stringify(obj)), obj)
+const prefixConflictingKeys = obj => {
+  Object.keys(obj).forEach(key => {
+    if (restrictedNodeFields.includes(key)) {
+      obj[conflictFieldPrefix + upperFirst(key)] = obj[key]
+      delete obj[key]
+    }
+  })
+
+  return obj
+}
+
+const makeId = (type, id) => `${typePrefix}__${upperFirst(type)}__${id}`
 const makeTypeName = type => upperFirst(camelCase(`${typePrefix} ${type}`))
 
-export const CollectionNode = obj_ => {
-  const obj = cloneDeep(obj_)
+export const createNodeFactory = (type, providedFactoryOptions = {}) => (
+  obj,
+  providedNodeOptions = {},
+) => {
+  const factoryOptions = Object.assign(
+    {
+      getChildren: () => [],
+      middleware: identity,
+    },
+    providedFactoryOptions,
+  )
+  const nodeOptions = Object.assign(
+    {
+      parent: sourceId,
+    },
+    providedNodeOptions,
+  )
 
-  delete obj.products
+  const clonedObj = cloneDeep(obj)
+
+  const children = factoryOptions.getChildren(clonedObj)
+
+  const middlewareModifiedObj = factoryOptions.middleware(clonedObj)
+  const safeObj = prefixConflictingKeys(middlewareModifiedObj)
 
   return withDigest({
-    ...obj,
-    parent: sourceId,
-    children: obj_.products.edges.map(edge => edge.node.id),
-    // fields: {},
+    ...safeObj,
+    id: makeId(type, obj.id),
+    parent: nodeOptions.parent,
+    children,
     internal: {
-      type: makeTypeName('Collection'),
-      // fieldOwners: mapValues(constant(pkg.name), obj),
+      type: makeTypeName(type),
     },
   })
 }
 
-export const ProductNode = obj_ => {
-  const obj = cloneDeep(obj_)
+export const CollectionNode = createNodeFactory('Collection', {
+  getChildren: obj =>
+    obj.products.edges.map(edge => makeId('Product', edge.node.id)),
+  middleware: obj => {
+    delete obj.products
+    return obj
+  },
+})
 
-  if (obj.variants) {
-    const variants = obj.variants.edges.map(edge => edge.node)
-    const variantPrices = variants.map(variant => Number.parseFloat(variant.price)).filter(Boolean)
-    const minPrice = Math.min(...variantPrices) || 0
-    const maxPrice = Math.max(...variantPrices) || 0
+export const ProductNode = createNodeFactory('Product', {
+  getChildren: obj => {
+    if (!obj.variants) return []
 
-    // minPrice and maxPrice are wrapped in a string to comply with Shopify's
-    // string-wrapped Money values.
-    obj.minPrice = `${minPrice}`
-    obj.maxPrice = `${maxPrice}`
-  }
+    return obj.variants.edges.map(edge =>
+      makeId('ProductVariant', edge.node.id),
+    )
+  },
+  middleware: obj => {
+    if (obj.variants) {
+      const variants = obj.variants.edges.map(edge => edge.node)
+      const variantPrices = variants
+        .map(variant => Number.parseFloat(variant.price))
+        .filter(Boolean)
+      const minPrice = Math.min(...variantPrices) || 0
+      const maxPrice = Math.max(...variantPrices) || 0
 
-  delete obj.variants
+      // minPrice and maxPrice are wrapped in a string to comply with Shopify's
+      // string-wrapped Money values.
+      obj.minPrice = `${minPrice}`
+      obj.maxPrice = `${maxPrice}`
+    }
 
-  return withDigest({
-    ...obj,
-    parent: sourceId,
-    children: [],
-    // fields: {},
-    internal: {
-      type: makeTypeName('Product'),
-      // fieldOwners: mapValues(constant(pkg.name), obj),
-    },
-  })
-}
+    delete obj.variants
+    return obj
+  },
+})
 
-export const ProductVariantNode = (parent, obj) =>
-  withDigest({
-    ...obj,
-    parent: parent.id,
-    children: [],
-    // fields: {},
-    internal: {
-      type: makeTypeName('ProductVariant'),
-      // fieldOwners: mapValues(constant(pkg.name), obj),
-    },
-  })
+export const ProductVariantNode = createNodeFactory('ProductVariant')

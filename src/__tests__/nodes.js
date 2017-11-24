@@ -10,6 +10,7 @@ import {
 import server from './fixtures/server'
 import { collectionsQuery, productsQuery } from '../queries'
 
+const makeId = RewireAPI.__GetDependency__('makeId')
 const makeTypeName = RewireAPI.__GetDependency__('makeTypeName')
 
 describe('CollectionNode', () => {
@@ -98,8 +99,10 @@ describe('ProductVariantNode', () => {
   beforeAll(async () => {
     const result = await server(productsQuery, { first: 1 })
     node = ProductVariantNode(
-      result.data.shop.products.edges[0].node,
       result.data.shop.products.edges[0].node.variants.edges[0].node,
+      {
+        parent: makeId('Product', result.data.shop.products.edges[0].node.id),
+      },
     )
   })
 

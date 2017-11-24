@@ -27,14 +27,15 @@ const createProducts = async (client, createNode) => {
 
   products.forEach(product => {
     const productNode = ProductNode(product)
-
-    product.variants.edges.forEach(variant => {
-      const variantNode = ProductVariantNode(productNode, variant.node)
-      createNode(variantNode)
-      productNode.children.push(variantNode.id)
-    })
-
     createNode(productNode)
+
+    product.variants.edges.forEach(edge => {
+      const productVariant = edge.node
+      const productVariantNode = ProductVariantNode(productVariant, {
+        parent: productNode.id,
+      })
+      createNode(productVariantNode)
+    })
   })
 }
 
