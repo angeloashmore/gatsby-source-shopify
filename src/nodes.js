@@ -3,10 +3,8 @@ import {
   assoc,
   camelCase,
   cloneDeep,
-  constant,
   identity,
   isPlainObject,
-  mapValues,
   upperFirst,
 } from 'lodash/fp'
 import stringify from 'json-stringify-safe'
