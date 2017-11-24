@@ -20,7 +20,7 @@
     "gatsby-source-plugin",
     "shopify"
   ],
-  "author": "Angelo Ashmore <angelo.ashmore@walltowall.com>",
+  "author": "Angelo Ashmore",
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.26.0",
