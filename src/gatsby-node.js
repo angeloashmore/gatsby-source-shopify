@@ -29,13 +29,12 @@ const createProducts = async (client, createNode) => {
     const productNode = ProductNode(product)
     createNode(productNode)
 
-    product.variants.edges.forEach(edge => {
-      const productVariant = edge.node
-      const productVariantNode = ProductVariantNode(productVariant, {
-        parent: productNode.id,
-      })
-      createNode(productVariantNode)
-    })
+    product.variants.edges.forEach(
+      pipe(
+        edge => ProductVariantNode(edge.node, { parent: productNode.id }),
+        createNode,
+      ),
+    )
   })
 }
 
