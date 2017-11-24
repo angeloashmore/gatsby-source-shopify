@@ -5,6 +5,7 @@ import {
   cloneDeep,
   constant,
   identity,
+  isPlainObject,
   mapValues,
   upperFirst,
 } from 'lodash/fp'
@@ -35,10 +36,20 @@ const prefixConflictingKeys = obj => {
 const makeId = (type, id) => `${typePrefix}__${upperFirst(type)}__${id}`
 const makeTypeName = type => upperFirst(camelCase(`${typePrefix} ${type}`))
 
-export const createNodeFactory = (type, middleware = identity) => (
+const createNodeFactory = (type, middleware = identity) => (
   obj,
   overrides = {},
 ) => {
+  // if (!isPlainObject(obj))
+  //   throw new Error(
+  //     `The source object must be a plain object. An argument of type "${typeof obj}" was provided.`,
+  //   )
+
+  // if (!isPlainObject(overrides))
+  //   throw new Error(
+  //     `Node overrides must be a plain object. An argument of type "${typeof overrides}" was provided.`,
+  //   )
+
   const clonedObj = cloneDeep(obj)
   const safeObj = prefixConflictingKeys(clonedObj)
 
@@ -60,41 +71,39 @@ export const createNodeFactory = (type, middleware = identity) => (
   })
 }
 
-export const CollectionNode = createNodeFactory(
-  'Collection',
-  node => {
-    if (node.products) {
-      node.children = node.products.edges.map(edge => makeId('Product', edge.node.id))
-      delete node.products
-    }
-
-    return node
+export const CollectionNode = createNodeFactory('Collection', node => {
+  if (node.products) {
+    node.children = node.products.edges.map(edge =>
+      makeId('Product', edge.node.id),
+    )
+    delete node.products
   }
-)
 
-export const ProductNode = createNodeFactory(
-  'Product',
-  node => {
-    if (node.variants) {
-      const variants = node.variants.edges.map(edge => edge.node)
-      const variantPrices = variants
-        .map(variant => Number.parseFloat(variant.price))
-        .filter(Boolean)
-      const minPrice = Math.min(...variantPrices) || 0
-      const maxPrice = Math.max(...variantPrices) || 0
+  return node
+})
 
-      // minPrice and maxPrice are wrapped in a string to comply with Shopify's
-      // string-wrapped Money values.
-      node.minPrice = `${minPrice}`
-      node.maxPrice = `${maxPrice}`
+export const ProductNode = createNodeFactory('Product', node => {
+  if (node.variants) {
+    const variants = node.variants.edges.map(edge => edge.node)
+    const variantPrices = variants
+      .map(variant => Number.parseFloat(variant.price))
+      .filter(Boolean)
+    const minPrice = Math.min(...variantPrices) || 0
+    const maxPrice = Math.max(...variantPrices) || 0
 
-      node.children = variants.map(variant => makeId('ProductVariant', variant.id))
+    // minPrice and maxPrice are wrapped in a string to comply with Shopify's
+    // string-wrapped Money values.
+    node.minPrice = `${minPrice}`
+    node.maxPrice = `${maxPrice}`
 
-      delete node.variants
-    }
+    node.children = variants.map(variant =>
+      makeId('ProductVariant', variant.id),
+    )
 
-    return node
+    delete node.variants
   }
-)
+
+  return node
+})
 
 export const ProductVariantNode = createNodeFactory('ProductVariant')
