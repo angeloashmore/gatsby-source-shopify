@@ -5,6 +5,7 @@
   "scripts": {
     "build": "babel src --out-dir . --ignore __tests__",
     "format": "prettier --write 'src/**/*.js'",
+    "prepublish": "npm run build",
     "test": "jest",
     "test:watch": "npm run test -- --watch",
     "watch": "npm run build -- --watch"
