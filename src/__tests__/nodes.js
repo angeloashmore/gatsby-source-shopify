@@ -181,7 +181,7 @@ describe('ShopPolicy', () => {
 
   test('contains convenience fields when called with ShopPolicy', () => {
     expect(node).toMatchObject({
-      type: expect.stringMatching(/privacyPolicy|refundPolicy|termsOfService/),
+      type: expect.any(String),
     })
   })
 })
