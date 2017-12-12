@@ -7,9 +7,13 @@ request and/or open an issue for improvements you feel are necessary. Thanks!
 
 ## Install
 
-`npm install --save gatsby-source-shopify`
+```sh
+npm install --save gatsby-source-shopify
+```
 
 ## How to use
+
+Add the following plugin config to your `gatsby-config.js` file.
 
 ```js
 // In your gatsby-config.js
@@ -43,7 +47,7 @@ You can query nodes created from Shopify like the following:
 
 Utilize Gatsby's built-in GraphiQL IDE to explore the node schemas available.
 
-## List of Nodes
+## List of implemented nodes
 
 | Name                 | Description                                                                                                           |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------- |
