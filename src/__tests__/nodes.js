@@ -12,12 +12,15 @@ import { collectionsQuery, productsQuery } from '../queries'
 
 const generateNodeId = RewireAPI.__GetDependency__('generateNodeId')
 
+/**
+ * CollectionNode
+ */
 describe('CollectionNode', () => {
   let node
 
   beforeAll(async () => {
     const result = await server(collectionsQuery, { first: 1 })
-    node = ProductNode(result.data.shop.collections.edges[0].node)
+    node = CollectionNode(result.data.shop.collections.edges[0].node)
   })
 
   test('creates an object', () => {
@@ -45,6 +48,9 @@ describe('CollectionNode', () => {
   })
 })
 
+/**
+ * ProductNode
+ */
 describe('ProductNode', () => {
   let node
 
@@ -92,6 +98,9 @@ describe('ProductNode', () => {
   })
 })
 
+/**
+ * ProductVariantNode
+ */
 describe('ProductVariantNode', () => {
   let node
 

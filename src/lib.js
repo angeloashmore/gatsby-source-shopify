@@ -1,6 +1,9 @@
 import ExtendableError from 'es6-error'
 import { get, last } from 'lodash/fp'
 
+/**
+ * Error with message formatted specifically for GraphQL error messages.
+ */
 export class GraphQLError extends ExtendableError {
   constructor({ message, locations, fields }) {
     let str = message
@@ -14,6 +17,10 @@ export class GraphQLError extends ExtendableError {
   }
 }
 
+/**
+ * Get all paginated data from a query. Will execute multiple requests as
+ * needed.
+ */
 export const queryAll = async (
   client,
   path,
@@ -40,7 +47,7 @@ export const queryAll = async (
     : (aggregatedResponse = nodes)
 
   if (get([...path, 'pageInfo', 'hasNextPage'], false, data))
-    return getProducts(
+    return queryAll(
       client,
       path,
       query,
