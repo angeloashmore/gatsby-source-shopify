@@ -19,7 +19,7 @@ export const ProductNode = createNodeFactory('Product', node => {
   if (node.variants) {
     const variants = node.variants.edges.map(edge => edge.node)
     const variantPrices = variants
-      .map(variant => variant.price)
+      .map(variant => Number.parseFloat(variant.price))
       .filter(Boolean)
 
     node.minPrice = Math.min(...variantPrices, 0)
