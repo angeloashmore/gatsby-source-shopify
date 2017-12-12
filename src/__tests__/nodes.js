@@ -92,8 +92,8 @@ describe('ProductNode', () => {
 
   test('contains convenience fields when called with Product', () => {
     expect(node).toMatchObject({
-      maxPrice: expect.any(String),
-      minPrice: expect.any(String),
+      maxPrice: expect.any(Number),
+      minPrice: expect.any(Number),
     })
   })
 })
@@ -135,7 +135,7 @@ describe('ProductVariantNode', () => {
         id: expect.any(String),
         src: expect.any(String),
       }),
-      price: expect.any(String),
+      price: expect.any(Number),
       sku: expect.any(String),
       title: expect.any(String),
       weight: expect.any(Number),

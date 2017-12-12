@@ -19,15 +19,11 @@ export const ProductNode = createNodeFactory('Product', node => {
   if (node.variants) {
     const variants = node.variants.edges.map(edge => edge.node)
     const variantPrices = variants
-      .map(variant => Number.parseFloat(variant.price))
+      .map(variant => variant.price)
       .filter(Boolean)
-    const minPrice = Math.min(...variantPrices) || 0
-    const maxPrice = Math.max(...variantPrices) || 0
 
-    // minPrice and maxPrice are wrapped in a string to comply with Shopify's
-    // string-wrapped Money values.
-    node.minPrice = `${minPrice}`
-    node.maxPrice = `${maxPrice}`
+    node.minPrice = Math.min(...variantPrices, 0)
+    node.maxPrice = Math.max(...variantPrices, 0)
 
     node.children = variants.map(variant =>
       generateNodeId('ProductVariant', variant.id),
@@ -39,4 +35,8 @@ export const ProductNode = createNodeFactory('Product', node => {
   return node
 })
 
-export const ProductVariantNode = createNodeFactory('ProductVariant')
+export const ProductVariantNode = createNodeFactory('ProductVariant', node => {
+  node.price = Number.parseFloat(node.price)
+
+  return node
+})
