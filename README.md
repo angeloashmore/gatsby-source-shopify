@@ -2,7 +2,8 @@
 
 Source plugin for pulling product data into Gatsby from a Shopify store.
 
-**Note**: This is not a feature-complete source plugin. Please submit a pull request and/or open an issue for improvements you feel are necessary. Thanks!
+**Note**: This is not a feature-complete source plugin. Please submit a pull
+request and/or open an issue for improvements you feel are necessary. Thanks!
 
 ## Install
 
@@ -10,7 +11,7 @@ Source plugin for pulling product data into Gatsby from a Shopify store.
 
 ## How to use
 
-```javascript
+```js
 // In your gatsby-config.js
 plugins: [
   {
@@ -41,3 +42,12 @@ You can query nodes created from Shopify like the following:
 ```
 
 Utilize Gatsby's built-in GraphiQL IDE to explore the node schemas available.
+
+## List of Nodes
+
+| Name                 | Description                                                                                                           |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `CollectionNode`     | Represents a grouping of products that a shop owner can create to organize them or make their shops easier to browse. |
+| `ProductNode`        | Represents an individual item for sale in a Shopify store.                                                            |
+| `ProductVariantNode` | Represents a different version of a product, such as differing sizes or differing colors.                             |
+| `ShopPolicyNode`     | Policy that a merchant has configured for their store, such as their refund or privacy policy.                        |
