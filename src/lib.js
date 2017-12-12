@@ -1,6 +1,8 @@
 import ExtendableError from 'es6-error'
 import { get, last } from 'lodash/fp'
 
+const UNAUTHORIZED_ERROR = new Error('Unauthorized')
+
 /**
  * Error with message formatted specifically for GraphQL error messages.
  */
@@ -18,6 +20,28 @@ export class GraphQLError extends ExtendableError {
 }
 
 /**
+ * Request a query from a client. Throws an error is any are returned.
+ */
+export const queryOnce = async (
+  client,
+  query,
+  first = 250,
+  after,
+) => {
+  const { data, errors } = await client.query(
+    query,
+    { first, after },
+    (_req, res) => {
+      if (res.status === 401) throw UNAUTHORIZED_ERROR
+    },
+  )
+
+  if (errors) throw new GraphQLError(errors[0])
+
+  return data
+}
+
+/**
  * Get all paginated data from a query. Will execute multiple requests as
  * needed.
  */
@@ -29,15 +53,7 @@ export const queryAll = async (
   after,
   aggregatedResponse,
 ) => {
-  const { data, errors } = await client.query(
-    query,
-    { first, after },
-    (_req, res) => {
-      if (res.status === 401) throw new Error('Not authorized')
-    },
-  )
-
-  if (errors) throw new GraphQLError(errors[0])
+  const data = await queryOnce(client, query, first, after)
 
   const edges = get([...path, 'edges'], data)
   const nodes = edges.map(edge => edge.node)

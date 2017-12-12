@@ -5,12 +5,15 @@ import {
   CollectionNode,
   ProductNode,
   ProductVariantNode,
+  ShopPolicyNode,
   __RewireAPI__ as RewireAPI,
 } from '../nodes'
 import server from './fixtures/server'
-import { collectionsQuery, productsQuery } from '../queries'
+import { collectionsQuery, productsQuery, policiesQuery } from '../queries'
 
 const generateNodeId = RewireAPI.__GetDependency__('generateNodeId')
+
+const NODE_OWNER = 'owner'
 
 /**
  * CollectionNode
@@ -21,13 +24,14 @@ describe('CollectionNode', () => {
   beforeAll(async () => {
     const result = await server(collectionsQuery, { first: 1 })
     node = CollectionNode(result.data.shop.collections.edges[0].node)
+    node.internal.owner = NODE_OWNER
   })
 
   test('creates an object', () => {
     expect(isPlainObject(node)).toBe(true)
   })
 
-  test.skip('is a valid node', () => {
+  test('is a valid node', () => {
     expect(Joi.validate(node, nodeSchema).error).toBe(null)
   })
 
@@ -57,13 +61,14 @@ describe('ProductNode', () => {
   beforeAll(async () => {
     const result = await server(productsQuery, { first: 1 })
     node = ProductNode(result.data.shop.products.edges[0].node)
+    node.internal.owner = NODE_OWNER
   })
 
   test('creates an object', () => {
     expect(isPlainObject(node)).toBe(true)
   })
 
-  test.skip('is a valid node', () => {
+  test('is a valid node', () => {
     expect(Joi.validate(node, nodeSchema).error).toBe(null)
   })
 
@@ -115,13 +120,14 @@ describe('ProductVariantNode', () => {
         ),
       },
     )
+    node.internal.owner = NODE_OWNER
   })
 
   test('creates an object', () => {
     expect(isPlainObject(node)).toBe(true)
   })
 
-  test.skip('is a valid node', () => {
+  test('is a valid node', () => {
     expect(Joi.validate(node, nodeSchema).error).toBe(null)
   })
 
@@ -140,6 +146,42 @@ describe('ProductVariantNode', () => {
       title: expect.any(String),
       weight: expect.any(Number),
       weightUnit: expect.any(String),
+    })
+  })
+})
+
+/**
+ * ShopPolicy
+ */
+describe('ShopPolicy', () => {
+  let node
+
+  beforeAll(async () => {
+    const result = await server(policiesQuery)
+    node = ShopPolicyNode(result.data.shop.privacyPolicy, { type: 'privacyPolicy' })
+    node.internal.owner = NODE_OWNER
+  })
+
+  test('creates an object', () => {
+    expect(isPlainObject(node)).toBe(true)
+  })
+
+  test('is a valid node', () => {
+    expect(Joi.validate(node, nodeSchema).error).toBe(null)
+  })
+
+  test('contains Shopify ShopPolicy fields when called with ShopPolicy', () => {
+    expect(node).toMatchObject({
+      body: expect.any(String),
+      id: expect.any(String),
+      title: expect.any(String),
+      url: expect.any(String),
+    })
+  })
+
+  test('contains convenience fields when called with ShopPolicy', () => {
+    expect(node).toMatchObject({
+      type: expect.stringMatching(/privacyPolicy|refundPolicy|termsOfService/),
     })
   })
 })

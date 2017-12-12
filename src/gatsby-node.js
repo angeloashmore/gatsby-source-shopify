@@ -1,8 +1,8 @@
 import createGraphQLClient from 'graphql-client'
 import { partial, pipe } from 'lodash/fp'
-import { queryAll } from './lib'
-import { CollectionNode, ProductNode, ProductVariantNode } from './nodes'
-import { collectionsQuery, productsQuery } from './queries'
+import { queryOnce, queryAll } from './lib'
+import { CollectionNode, ProductNode, ProductVariantNode, ShopPolicyNode } from './nodes'
+import { collectionsQuery, productsQuery, policiesQuery } from './queries'
 
 const createClient = (name, token) =>
   createGraphQLClient({
@@ -38,6 +38,20 @@ const createProducts = async (client, createNode) => {
   })
 }
 
+const createShopPolicies = async (client, createNode) => {
+  const policies = await queryOnce(
+    client,
+    policiesQuery,
+  )
+
+  Object.entries(policies).forEach(
+    pipe(
+      ([type, policy]) => ShopPolicyNode(policy, { type }),
+      createNode
+    )
+  )
+}
+
 export const sourceNodes = async (
   { boundActionCreators: { createNode } },
   { name, token },
@@ -46,4 +60,5 @@ export const sourceNodes = async (
 
   await createCollections(client, createNode)
   await createProducts(client, createNode)
+  await createShopPolicies(client, createNode)
 }

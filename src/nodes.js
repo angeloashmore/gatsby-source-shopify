@@ -40,3 +40,5 @@ export const ProductVariantNode = createNodeFactory('ProductVariant', node => {
 
   return node
 })
+
+export const ShopPolicyNode = createNodeFactory('ShopPolicy')

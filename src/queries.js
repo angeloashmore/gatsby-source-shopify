@@ -85,3 +85,28 @@ export const productsQuery = `
     }
   }
 `
+
+export const policiesQuery = `
+  query GetPolicies {
+    shop {
+      privacyPolicy {
+        body
+        id
+        title
+        url
+      }
+      refundPolicy {
+        body
+        id
+        title
+        url
+      }
+      termsOfService {
+        body
+        id
+        title
+        url
+      }
+    }
+  }
+`
