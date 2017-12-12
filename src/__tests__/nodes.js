@@ -158,7 +158,9 @@ describe('ShopPolicy', () => {
 
   beforeAll(async () => {
     const result = await server(policiesQuery)
-    node = ShopPolicyNode(result.data.shop.privacyPolicy, { type: 'privacyPolicy' })
+    node = ShopPolicyNode(result.data.shop.privacyPolicy, {
+      type: 'privacyPolicy',
+    })
     node.internal.owner = NODE_OWNER
   })
 
