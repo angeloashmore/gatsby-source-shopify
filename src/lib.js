@@ -20,7 +20,7 @@ export class GraphQLError extends ExtendableError {
 }
 
 /**
- * Request a query from a client. Throws an error is any are returned.
+ * Request a query from a client. Throws an error if any are returned.
  */
 export const queryOnce = async (client, query, first = 250, after) => {
   const { data, errors } = await client.query(

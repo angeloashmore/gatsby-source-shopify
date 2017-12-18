@@ -9,15 +9,6 @@ RewireAPI.__Rewire__('createGraphQLClient', () => ({ query: queryMock }))
 const name = 'name'
 const token = 'token'
 
-describe('createClient', () => {
-  test('creates a Shopify GraphQL client', async () => {
-    const client = createClient(name, token)
-    const result = await client.query('{ shop { name } }')
-
-    expect(result).toEqual({ data: { shop: { name: 'Hello World' } } })
-  })
-})
-
 describe('sourceNodes', () => {
   const redux = {
     boundActionCreators: {
