@@ -4,6 +4,7 @@ import { queryOnce, queryAll } from './lib'
 import {
   CollectionNode,
   ProductNode,
+  ProductOptionNode,
   ProductVariantNode,
   ShopPolicyNode,
 } from './nodes'
@@ -23,7 +24,7 @@ export const sourceNodes = async (
   // Call the create function, each with their own fetching. Individual
   // fetching is required as some nodes require multiple paginated requests.
   await createCollections(client, createNode)
-  await createProductsAndProductVariants(client, createNode)
+  await createProductsAndChildren(client, createNode)
   await createShopPolicies(client, createNode)
 }
 
@@ -41,21 +42,30 @@ async function createCollections(client, createNode) {
 }
 
 /**
- * Query storefront for Product objects and their associated ProductVariants
- * and create ProductNodes and ProductVariantNodes.
+ * Query storefront for Product objects and their associated ProductOptions and
+ * ProductVariants and create their nodes.
  *
- * ProductNodes and ProductVariantNodes have parent-child links.
+ * ProductNodes, ProductOptions, ProductVariantNodes have parent-child links.
  */
-async function createProductsAndProductVariants(client, createNode) {
+async function createProductsAndChildren(client, createNode) {
   const products = await queryAll(client, ['shop', 'products'], productsQuery)
 
   products.forEach(product => {
     const productNode = ProductNode(product)
     createNode(productNode)
 
+    // Create child ProductVariant nodes.
     product.variants.edges.forEach(
       pipe(
         edge => ProductVariantNode(edge.node, { parent: productNode.id }),
+        createNode,
+      ),
+    )
+
+    // Create child ProductOptions nodes.
+    product.options.forEach(
+      pipe(
+        option => ProductOptionNode(option, { parent: productNode.id }),
         createNode,
       ),
     )
