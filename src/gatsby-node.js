@@ -44,7 +44,7 @@ export const sourceNodes = async (
 async function createArticles(client, createNode) {
   const articles = await queryAll(client, ['shop', 'articles'], articlesQuery)
 
-  articles.forEach(pipe(article => ArticleNode, createNode))
+  articles.forEach(pipe(ArticleNode, createNode))
 }
 
 /**
