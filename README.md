@@ -71,6 +71,6 @@ please open an issue. Until then, the nodes will not be implemented to lessen
 the chances of someone accidentally making private information publicly
 available.
 
-gatsby: https://gatsby.org
-shopify: https://shopify.com
-graphql-intro: https://medium.com/the-graphqlhub/graphiql-graphql-s-killer-app-9896242b2125
+[gatsby]: https://gatsby.org
+[shopify]: https://shopify.com
+[graphql-intro]: https://medium.com/the-graphqlhub/graphiql-graphql-s-killer-app-9896242b2125
