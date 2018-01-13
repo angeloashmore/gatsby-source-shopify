@@ -5,6 +5,8 @@ import createNodeHelpers from 'gatsby-node-helpers'
 const TYPE_PREFIX = 'Shopify'
 
 // Node types
+const ARTICLE = 'Article'
+const BLOG = 'Blog'
 const COLLECTION = 'Collection'
 const PRODUCT = 'Product'
 const PRODUCT_OPTION = 'ProductOption'
@@ -15,6 +17,23 @@ const SHOP_POLICY = 'ShopPolicy'
 const { createNodeFactory, generateNodeId } = createNodeHelpers({
   typePrefix: TYPE_PREFIX,
 })
+
+/**
+ * ArticleNode
+ */
+export const ArticleNode = createNodeFactory(ARTICLE, tap(node => {
+  if (node.blog) {
+    // Set parent.
+    node.parent = generateNodeId(BLOG, node.blog.id)
+
+    delete node.blog
+  }
+}))
+
+/**
+ * BlogNode
+ */
+export const BlogNode = createNodeFactory(BLOG)
 
 /**
  * CollectionNode

@@ -2,6 +2,8 @@ import Joi from 'joi'
 import { nodeSchema } from 'gatsby/dist/joi-schemas/joi'
 import { isPlainObject } from 'lodash/fp'
 import {
+  ArticleNode,
+  BlogNode,
   CollectionNode,
   ProductNode,
   ProductOptionNode,
@@ -10,11 +12,86 @@ import {
   __RewireAPI__ as RewireAPI,
 } from '../nodes'
 import server from './fixtures/server'
-import { collectionsQuery, productsQuery, policiesQuery } from '../queries'
+import {
+  articlesQuery,
+  blogsQuery,
+  collectionsQuery,
+  productsQuery,
+  shopPoliciesQuery,
+} from '../queries'
 
 const generateNodeId = RewireAPI.__GetDependency__('generateNodeId')
 
 const NODE_OWNER = 'owner'
+
+/**
+ * ArticleNode
+ */
+describe('ArticleNode', () => {
+  let node
+
+  beforeAll(async () => {
+    const result = await server(articlesQuery, { first: 1 })
+    node = ArticleNode(result.data.shop.articles.edges[0].node)
+    node.internal.owner = NODE_OWNER
+  })
+
+  test('creates an object', () => {
+    expect(isPlainObject(node)).toBe(true)
+  })
+
+  test('is a valid node', () => {
+    expect(Joi.validate(node, nodeSchema).error).toBe(null)
+  })
+
+  test('contains Shopify Article fields when called with Article', () => {
+    expect(node).toMatchObject({
+      content: expect.any(String),
+      contentHtml: expect.any(String),
+      excerpt: expect.any(String),
+      excerptHtml: expect.any(String),
+      id: expect.any(String),
+      image: expect.objectContaining({
+        altText: expect.any(String),
+        id: expect.any(String),
+        src: expect.any(String),
+      }),
+      publishedAt: expect.any(String),
+      tags: expect.arrayContaining([expect.any(String)]),
+      title: expect.any(String),
+      url: expect.any(String),
+    })
+  })
+})
+
+/**
+ * BlogNode
+ */
+describe('BlogNode', () => {
+  let node
+
+  beforeAll(async () => {
+    const result = await server(blogsQuery, { first: 1 })
+    node = BlogNode(result.data.shop.blogs.edges[0].node)
+    node.internal.owner = NODE_OWNER
+  })
+
+  test('creates an object', () => {
+    expect(isPlainObject(node)).toBe(true)
+  })
+
+  test('is a valid node', () => {
+    expect(Joi.validate(node, nodeSchema).error).toBe(null)
+  })
+
+  test('contains Shopify Blog fields when called with Blog', () => {
+    expect(node).toMatchObject({
+      id: expect.any(String),
+      title: expect.any(String),
+      url: expect.any(String),
+    })
+  })
+})
 
 /**
  * CollectionNode
@@ -188,7 +265,7 @@ describe('ShopPolicy', () => {
   let node
 
   beforeAll(async () => {
-    const result = await server(policiesQuery)
+    const result = await server(shopPoliciesQuery)
     node = ShopPolicyNode(result.data.shop.privacyPolicy, {
       type: 'privacyPolicy',
     })

@@ -1,3 +1,37 @@
+export const articlesQuery = `
+  query GetArticles($first: Int!, $after: String) {
+    shop {
+      articles(first: $first, after: $after) {
+        pageInfo {
+          hasNextPage
+        }
+        edges {
+          cursor
+          node {
+            blog {
+              id
+            }
+            content
+            contentHtml
+            excerpt
+            excerptHtml
+            id
+            image {
+              altText
+              id
+              src
+            }
+            publishedAt
+            tags
+            title
+            url
+          }
+        }
+      }
+    }
+  }
+`
+
 export const collectionsQuery = `
   query GetCollections($first: Int!, $after: String) {
     shop {
@@ -26,6 +60,26 @@ export const collectionsQuery = `
             }
             title
             updatedAt
+          }
+        }
+      }
+    }
+  }
+`
+
+export const blogsQuery = `
+  query GetBlogs($first: Int!, $after: String) {
+    shop {
+      blogs(first: $first, after: $after) {
+        pageInfo {
+          hasNextPage
+        }
+        edges {
+          cursor
+          node {
+            id
+            title
+            url
           }
         }
       }
@@ -86,7 +140,7 @@ export const productsQuery = `
   }
 `
 
-export const policiesQuery = `
+export const shopPoliciesQuery = `
   query GetPolicies {
     shop {
       privacyPolicy {

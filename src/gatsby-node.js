@@ -2,13 +2,21 @@ import createGraphQLClient from 'graphql-client'
 import { pipe } from 'lodash/fp'
 import { queryOnce, queryAll } from './lib'
 import {
+  ArticleNode,
+  BlogNode,
   CollectionNode,
   ProductNode,
   ProductOptionNode,
   ProductVariantNode,
   ShopPolicyNode,
 } from './nodes'
-import { collectionsQuery, productsQuery, policiesQuery } from './queries'
+import {
+  articlesQuery,
+  blogsQuery,
+  collectionsQuery,
+  productsQuery,
+  shopPoliciesQuery,
+} from './queries'
 
 export const sourceNodes = async (
   { boundActionCreators: { createNode } },
@@ -23,9 +31,29 @@ export const sourceNodes = async (
 
   // Call the create function, each with their own fetching. Individual
   // fetching is required as some nodes require multiple paginated requests.
+  await createArticles(client, createNode)
+  await createBlogs(client, createNode)
   await createCollections(client, createNode)
   await createProductsAndChildren(client, createNode)
   await createShopPolicies(client, createNode)
+}
+
+/**
+ * Query storefront for Article objects and create ArticleNodes.
+ */
+async function createArticles(client, createNode) {
+  const articles = await queryAll(client, ['shop', 'articles'], articlesQuery)
+
+  articles.forEach(pipe(article => ArticleNode, createNode))
+}
+
+/**
+ * Query storefront for Blog objects and create BlogNodes.
+ */
+async function createBlogs(client, createNode) {
+  const blogs = await queryAll(client, ['shop', 'blogs'], blogsQuery)
+
+  blogs.forEach(pipe(BlogNode, createNode))
 }
 
 /**
@@ -76,7 +104,7 @@ async function createProductsAndChildren(client, createNode) {
  * Query storefront for ShopPolicy objects and create ShopPolicyNodes.
  */
 async function createShopPolicies(client, createNode) {
-  const policies = await queryOnce(client, policiesQuery)
+  const policies = await queryOnce(client, shopPoliciesQuery)
 
   Object.entries(policies).forEach(
     pipe(([type, policy]) => ShopPolicyNode(policy, { type }), createNode),
