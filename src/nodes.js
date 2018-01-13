@@ -21,14 +21,17 @@ const { createNodeFactory, generateNodeId } = createNodeHelpers({
 /**
  * ArticleNode
  */
-export const ArticleNode = createNodeFactory(ARTICLE, tap(node => {
-  if (node.blog) {
-    // Set parent.
-    node.parent = generateNodeId(BLOG, node.blog.id)
+export const ArticleNode = createNodeFactory(
+  ARTICLE,
+  tap(node => {
+    if (node.blog) {
+      // Set parent.
+      node.parent = generateNodeId(BLOG, node.blog.id)
 
-    delete node.blog
-  }
-}))
+      delete node.blog
+    }
+  }),
+)
 
 /**
  * BlogNode
