@@ -53,5 +53,6 @@ Utilize Gatsby's built-in GraphiQL IDE to explore the node schemas available.
 | -------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | `CollectionNode`     | Represents a grouping of products that a shop owner can create to organize them or make their shops easier to browse. |
 | `ProductNode`        | Represents an individual item for sale in a Shopify store.                                                            |
+| `ProductOptionNode`  | Custom product property names.                                                                                        |
 | `ProductVariantNode` | Represents a different version of a product, such as differing sizes or differing colors.                             |
 | `ShopPolicyNode`     | Policy that a merchant has configured for their store, such as their refund or privacy policy.                        |
