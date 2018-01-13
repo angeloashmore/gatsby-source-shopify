@@ -1,9 +1,7 @@
 # gatsby-source-shopify
 
-Source plugin for pulling product data into Gatsby from a Shopify store.
-
-**Note**: This is not a feature-complete source plugin. Please submit a pull
-request and/or open an issue for improvements you feel are necessary. Thanks!
+Source plugin for pulling product data into [Gatsby][gatsby] from a
+[Shopify][shopify] store.
 
 ## Install
 
@@ -45,7 +43,9 @@ You can query nodes created from Shopify like the following:
 }
 ```
 
-Utilize Gatsby's built-in GraphiQL IDE to explore the node schemas available.
+Utilize Gatsby's built-in [GraphiQL IDE][graphiql-intro] to explore the node schemas available.
+
+By default, this is at `http://localhost:8000/___graphql`
 
 ## List of implemented nodes
 
@@ -58,3 +58,19 @@ Utilize Gatsby's built-in GraphiQL IDE to explore the node schemas available.
 | `ProductOptionNode`  | Custom product property names.                                                                                        |
 | `ProductVariantNode` | Represents a different version of a product, such as differing sizes or differing colors.                             |
 | `ShopPolicyNode`     | Policy that a merchant has configured for their store, such as their refund or privacy policy.                        |
+
+## A note on customer information
+
+Not all Shopify nodes have been implemented as they are not necessary for the
+static portion of a Gatsby-generated website. This includes any node that
+contains sensitive customer-specific information, such as `Order` and
+`Payment`.
+
+If you are in need of this data (e.g. building a private, internal website),
+please open an issue. Until then, the nodes will not be implemented to lessen
+the chances of someone accidentally making private information publicly
+available.
+
+gatsby: https://gatsby.org
+shopify: https://shopify.com
+graphql-intro: https://medium.com/the-graphqlhub/graphiql-graphql-s-killer-app-9896242b2125
