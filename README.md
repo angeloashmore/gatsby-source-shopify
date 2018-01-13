@@ -73,4 +73,4 @@ available.
 
 [gatsby]: https://gatsby.org
 [shopify]: https://shopify.com
-[graphql-intro]: https://medium.com/the-graphqlhub/graphiql-graphql-s-killer-app-9896242b2125
+[graphiql-intro]: https://medium.com/the-graphqlhub/graphiql-graphql-s-killer-app-9896242b2125
