@@ -4,6 +4,7 @@ import { isPlainObject } from 'lodash/fp'
 import {
   CollectionNode,
   ProductNode,
+  ProductOptionNode,
   ProductVariantNode,
   ShopPolicyNode,
   __RewireAPI__ as RewireAPI,
@@ -99,6 +100,43 @@ describe('ProductNode', () => {
     expect(node).toMatchObject({
       maxPrice: expect.any(Number),
       minPrice: expect.any(Number),
+    })
+  })
+})
+
+/**
+ * ProductOptionNode
+ */
+describe('ProductOptionNode', () => {
+  let node
+
+  beforeAll(async () => {
+    const result = await server(productsQuery, { first: 1 })
+    node = ProductOptionNode(
+      result.data.shop.products.edges[0].node.options[0],
+      {
+        parent: generateNodeId(
+          'Product',
+          result.data.shop.products.edges[0].node.id,
+        ),
+      },
+    )
+    node.internal.owner = NODE_OWNER
+  })
+
+  test('creates an object', () => {
+    expect(isPlainObject(node)).toBe(true)
+  })
+
+  test('is a valid node', () => {
+    expect(Joi.validate(node, nodeSchema).error).toBe(null)
+  })
+
+  test('contains Shopify ProductOption fields when called with ProductOption', () => {
+    expect(node).toMatchObject({
+      id: expect.any(String),
+      name: expect.any(String),
+      values: expect.arrayContaining([expect.any(String)]),
     })
   })
 })

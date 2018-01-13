@@ -7,6 +7,7 @@ const TYPE_PREFIX = 'Shopify'
 // Node types
 const COLLECTION = 'Collection'
 const PRODUCT = 'Product'
+const PRODUCT_OPTION = 'ProductOption'
 const PRODUCT_VARIANT = 'ProductVariant'
 const SHOP_POLICY = 'ShopPolicy'
 
@@ -59,6 +60,13 @@ export const ProductNode = createNodeFactory(
     }
   }),
 )
+
+/**
+ * ProductOptionNode
+ *
+ * Custom product property names.
+ */
+export const ProductOptionNode = createNodeFactory(PRODUCT_OPTION)
 
 /**
  * ProductVariantNode
