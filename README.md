@@ -51,6 +51,8 @@ Utilize Gatsby's built-in GraphiQL IDE to explore the node schemas available.
 
 | Name                 | Description                                                                                                           |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `ArticleNode`        | A blog entry.                                                                                                         |
+| `BlogNode`           | Collection of articles.                                                                                               |
 | `CollectionNode`     | Represents a grouping of products that a shop owner can create to organize them or make their shops easier to browse. |
 | `ProductNode`        | Represents an individual item for sale in a Shopify store.                                                            |
 | `ProductOptionNode`  | Custom product property names.                                                                                        |
