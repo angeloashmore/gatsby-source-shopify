@@ -44,19 +44,29 @@ export const ProductNode = createNodeFactory(
   PRODUCT,
   tap(node => {
     if (node.variants) {
+      const { options } = node
       const variants = node.variants.edges.map(edge => edge.node)
+
+      // Set children.
+      const productOptionNodeIds = options.map(option =>
+        generateNodeId(PRODUCT_OPTION, option.id),
+      )
+      const productVariantNodeIds = variants.map(variant =>
+        generateNodeId(PRODUCT_VARIANT, variant.id),
+      )
+
+      node.children = [...productVariantNodeIds, ...productOptionNodeIds]
+
+      delete node.variants
+      delete node.options
+
+      // Set product prices.
       const variantPrices = variants
         .map(variant => Number.parseFloat(variant.price))
         .filter(Boolean)
 
       node.minPrice = Math.min(...variantPrices, 0)
       node.maxPrice = Math.max(...variantPrices, 0)
-
-      node.children = variants.map(variant =>
-        generateNodeId(PRODUCT_VARIANT, variant.id),
-      )
-
-      delete node.variants
     }
   }),
 )

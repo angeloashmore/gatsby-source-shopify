@@ -80,13 +80,6 @@ describe('ProductNode', () => {
       descriptionHtml: expect.any(String),
       handle: expect.any(String),
       onlineStoreUrl: expect.any(String),
-      options: expect.arrayContaining([
-        expect.objectContaining({
-          id: expect.any(String),
-          name: expect.any(String),
-          values: expect.arrayContaining([expect.any(String)]),
-        }),
-      ]),
       productType: expect.any(String),
       publishedAt: expect.any(String),
       tags: expect.arrayContaining([expect.any(String)]),
