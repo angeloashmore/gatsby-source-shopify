@@ -34,7 +34,7 @@ You can query nodes created from Shopify like the following:
 
 ```graphql
 {
-  allProductNode {
+  allShopifyProductNode {
     edges {
       node {
         id
