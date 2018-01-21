@@ -87,8 +87,8 @@ export const ProductNode = createNodeFactory(
         .map(variant => Number.parseFloat(variant.price))
         .filter(Boolean)
 
-      node.minPrice = Math.min(...variantPrices, 0)
-      node.maxPrice = Math.max(...variantPrices, 0)
+      node.minPrice = variantPrices.length ? Math.min(...variantPrices) : 0
+      node.maxPrice = variantPrices.length ? Math.max(...variantPrices) : 0
     }
   }),
 )
