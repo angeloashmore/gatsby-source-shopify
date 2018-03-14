@@ -113,6 +113,15 @@ export const productsQuery = `
             tags
             title
             updatedAt
+            images(first: 250) {
+              edges {
+                node {
+                  id
+                  src
+                  altText
+                }
+              }
+            }
             variants(first: 250) {
               edges {
                 node {

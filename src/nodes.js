@@ -11,6 +11,7 @@ const COLLECTION = 'Collection'
 const PRODUCT = 'Product'
 const PRODUCT_OPTION = 'ProductOption'
 const PRODUCT_VARIANT = 'ProductVariant'
+const IMAGE = 'Image'
 const SHOP_POLICY = 'ShopPolicy'
 
 // Create Gatsby node helpers.
@@ -90,6 +91,18 @@ export const ProductNode = createNodeFactory(
       node.minPrice = variantPrices.length ? Math.min(...variantPrices) : 0
       node.maxPrice = variantPrices.length ? Math.max(...variantPrices) : 0
     }
+
+    if (node.images) {
+      const images = node.images.edges.map(edge => edge.node)
+
+      const imageNodeIds = images.map(image =>
+        generateNodeId(IMAGE, image.id),
+      )
+
+      node.children = [...node.children, ...imageNodeIds]
+
+      delete node.images
+    }
   }),
 )
 
@@ -110,6 +123,12 @@ export const ProductVariantNode = createNodeFactory(
   PRODUCT_VARIANT,
   tap(node => (node.price = Number.parseFloat(node.price))),
 )
+
+/**
+ * ProductImageNode
+ *
+ */
+export const ProductImageNode = createNodeFactory(IMAGE)
 
 /**
  * ShopPolicyNode
