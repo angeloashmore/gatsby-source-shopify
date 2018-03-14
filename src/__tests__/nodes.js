@@ -8,6 +8,7 @@ import {
   ProductNode,
   ProductOptionNode,
   ProductVariantNode,
+  ProductImageNode,
   ShopPolicyNode,
   __RewireAPI__ as RewireAPI,
 } from '../nodes'
@@ -207,6 +208,43 @@ describe('ProductOptionNode', () => {
       id: expect.any(String),
       name: expect.any(String),
       values: expect.arrayContaining([expect.any(String)]),
+    })
+  })
+})
+
+/**
+ * ProductImageNode
+ */
+describe('ProductImageNode', () => {
+  let node
+
+  beforeAll(async () => {
+    const result = await server(productsQuery, { first: 1 })
+    node = ProductImageNode(
+      result.data.shop.products.edges[0].node.images.edges[0].node,
+      {
+        parent: generateNodeId(
+          'Image',
+          result.data.shop.products.edges[0].node.id,
+        ),
+      },
+    )
+    node.internal.owner = NODE_OWNER
+  })
+
+  test('creates an object', () => {
+    expect(isPlainObject(node)).toBe(true)
+  })
+
+  test('is a valid node', () => {
+    expect(Joi.validate(node, nodeSchema).error).toBe(null)
+  })
+
+  test('contains Shopify Image fields when called with Image', () => {
+    expect(node).toMatchObject({
+      id: expect.any(String),
+      altText: expect.any(String),
+      src: expect.any(String),
     })
   })
 })

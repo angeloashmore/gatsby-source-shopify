@@ -8,6 +8,7 @@ import {
   ProductNode,
   ProductOptionNode,
   ProductVariantNode,
+  ProductImageNode,
   ShopPolicyNode,
 } from './nodes'
 import {
@@ -95,6 +96,13 @@ async function createProductsAndChildren(client, createNode) {
       pipe(
         option => ProductOptionNode(option, { parent: productNode.id }),
         createNode,
+      ),
+    )
+
+    product.images.edges.forEach(
+      pipe(
+        edge => ProductImageNode(edge.node, { parent: productNode.id }),
+        createNode
       ),
     )
   })
