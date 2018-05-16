@@ -102,6 +102,15 @@ export const productsQuery = `
             descriptionHtml
             handle
             id
+            images(first: 250) {
+              edges {
+                node {
+                  id
+                  altText
+                  originalSrc
+                }
+              }
+            }
             onlineStoreUrl
             options {
               id
@@ -122,7 +131,7 @@ export const productsQuery = `
                   image {
                     altText
                     id
-                    src
+                    originalSrc
                   }
                   price
                   sku
