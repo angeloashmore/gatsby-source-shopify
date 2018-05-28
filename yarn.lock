@@ -3108,12 +3108,13 @@ gatsby-module-loader@^1.0.5:
     babel-runtime "^6.26.0"
     loader-utils "^0.2.16"
 
-gatsby-node-helpers@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/gatsby-node-helpers/-/gatsby-node-helpers-0.1.1.tgz#da06d5884e0a760cb26e1ef714a087db39bac2d4"
+gatsby-node-helpers@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/gatsby-node-helpers/-/gatsby-node-helpers-0.3.0.tgz#3bdca3b7902a702a5834fef280ad66d51099d57c"
   dependencies:
     json-stringify-safe "^5.0.1"
     lodash "^4.17.4"
+    p-is-promise "^1.1.0"
 
 gatsby-react-router-scroll@^1.0.1:
   version "1.0.1"
@@ -5572,6 +5573,10 @@ p-cancelable@^0.3.0:
 p-finally@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/p-finally/-/p-finally-1.0.0.tgz#3fbcfb15b899a44123b34b6dcc18b724336a2cae"
+
+p-is-promise@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/p-is-promise/-/p-is-promise-1.1.0.tgz#9c9456989e9f6588017b0434d56097675c3da05e"
 
 p-limit@^1.1.0:
   version "1.1.0"

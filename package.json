@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "es6-error": "^4.0.2",
-    "gatsby-node-helpers": "^0.1.1",
+    "gatsby-node-helpers": "^0.3.0",
     "graphql-client": "^2.0.0",
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.4"
