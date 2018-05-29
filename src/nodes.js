@@ -39,10 +39,22 @@ export const CollectionNode = createNodeFactory(
 export const ProductNode = createNodeFactory(
   PRODUCT,
   tap(node => {
-    if (node.variants)
-      node.variants___NODE = node.variants.edges.map(edge =>
-        generateNodeId(PRODUCT_VARIANT, edge.node.id),
+    if (node.variants) {
+      const variants = node.variants.edges.map(edge => edge.node)
+
+      node.variants___NODE = variants.map(variant =>
+        generateNodeId(PRODUCT_VARIANT, variant.id),
       )
+
+      const variantPrices = variants
+        .map(variant => Number.parseFloat(variant.price))
+        .filter(Boolean)
+
+      node.extras = {
+        minPrice: variantPrices.length ? Math.min(...variantPrices) : 0,
+        maxPrice: variantPrices.length ? Math.max(...variantPrices) : 0,
+      }
+    }
 
     if (node.options)
       node.options___NODE = node.options.map(option =>

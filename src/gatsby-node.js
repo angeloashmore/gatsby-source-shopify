@@ -24,7 +24,7 @@ export const sourceNodes = async (gatsby, options) => {
   const {
     boundActionCreators: { createNode },
   } = gatsby
-  const { name, token } = options
+  const { name, token, verbose = false } = options
 
   const client = new GraphQLClient(
     `https://${name}.myshopify.com/api/graphql`,
@@ -35,15 +35,21 @@ export const sourceNodes = async (gatsby, options) => {
     },
   )
 
-  const log = msg =>
-    console.log(chalk`\n{blue [gatsby-source-shopify/${name}]} ${msg}`)
+  const formatMsg = msg =>
+    chalk`\n{blue [gatsby-source-shopify/${name}]} ${msg}`
 
   try {
-    await createArticles(client, createNode, log)
-    await createBlogs(client, createNode, log)
-    await createCollections(client, createNode, log)
-    await createProductsAndChildren(client, createNode, log)
-    await createShopPolicies(client, createNode, log)
+    console.log(formatMsg('starting to fetch data from Shopify'))
+    const msg = formatMsg('finished fetching data from Shopify')
+    console.time(msg)
+    await Promise.all([
+      createArticles(client, createNode, formatMsg, verbose),
+      createBlogs(client, createNode, formatMsg, verbose),
+      createCollections(client, createNode, formatMsg, verbose),
+      createProductsAndChildren(client, createNode, formatMsg, verbose),
+      createShopPolicies(client, createNode, formatMsg, verbose),
+    ])
+    console.timeEnd(msg)
   } catch (e) {
     console.error(chalk`\n{red error} an error occured while sourcing data`)
 
@@ -55,8 +61,10 @@ export const sourceNodes = async (gatsby, options) => {
   }
 }
 
-const createArticles = async (client, createNode, log) => {
-  log('fetching articles')
+const createArticles = async (client, createNode, formatMsg, verbose) => {
+  const msg = formatMsg('fetched and processed articles')
+
+  if (verbose) console.time(msg)
   const articles = await queryAll(client, ['shop', 'articles'], ARTICLES_QUERY)
   articles.forEach(
     pipe(
@@ -64,10 +72,13 @@ const createArticles = async (client, createNode, log) => {
       createNode,
     ),
   )
+  if (verbose) console.timeEnd(msg)
 }
 
-const createBlogs = async (client, createNode, log) => {
-  log('fetching blogs')
+const createBlogs = async (client, createNode, formatMsg, verbose) => {
+  const msg = formatMsg('fetched and processed blogs')
+
+  if (verbose) console.time(msg)
   const blogs = await queryAll(client, ['shop', 'blogs'], BLOGS_QUERY)
   blogs.forEach(
     pipe(
@@ -75,10 +86,13 @@ const createBlogs = async (client, createNode, log) => {
       createNode,
     ),
   )
+  if (verbose) console.timeEnd(msg)
 }
 
-const createCollections = async (client, createNode, log) => {
-  log('fetching collections')
+const createCollections = async (client, createNode, formatMsg, verbose) => {
+  const msg = formatMsg('fetched and processed collections')
+
+  if (verbose) console.time(msg)
   const collections = await queryAll(
     client,
     ['shop', 'collections'],
@@ -90,10 +104,18 @@ const createCollections = async (client, createNode, log) => {
       createNode,
     ),
   )
+  if (verbose) console.timeEnd(msg)
 }
 
-const createProductsAndChildren = async (client, createNode, log) => {
-  log('fetching products')
+const createProductsAndChildren = async (
+  client,
+  createNode,
+  formatMsg,
+  verbose,
+) => {
+  const msg = formatMsg('fetched and processed products')
+
+  if (verbose) console.time(msg)
   const products = await queryAll(client, ['shop', 'products'], PRODUCTS_QUERY)
   products.forEach(product => {
     createNode(ProductNode(product))
@@ -112,10 +134,13 @@ const createProductsAndChildren = async (client, createNode, log) => {
       ),
     )
   })
+  if (verbose) console.timeEnd(msg)
 }
 
-const createShopPolicies = async (client, createNode, log) => {
-  log('fetching policies')
+const createShopPolicies = async (client, createNode, formatMsg, verbose) => {
+  const msg = formatMsg('fetched and processed policies')
+
+  if (verbose) console.time(msg)
   const { shop: policies } = await queryOnce(client, SHOP_POLICIES_QUERY)
   Object.entries(policies).forEach(
     pipe(
@@ -123,4 +148,5 @@ const createShopPolicies = async (client, createNode, log) => {
       createNode,
     ),
   )
+  if (verbose) console.timeEnd(msg)
 }
