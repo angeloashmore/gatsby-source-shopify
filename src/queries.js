@@ -1,4 +1,4 @@
-export const articlesQuery = `
+export const ARTICLES_QUERY = `
   query GetArticles($first: Int!, $after: String) {
     shop {
       articles(first: $first, after: $after) {
@@ -32,7 +32,27 @@ export const articlesQuery = `
   }
 `
 
-export const collectionsQuery = `
+export const BLOGS_QUERY = `
+  query GetBlogs($first: Int!, $after: String) {
+    shop {
+      blogs(first: $first, after: $after) {
+        pageInfo {
+          hasNextPage
+        }
+        edges {
+          cursor
+          node {
+            id
+            title
+            url
+          }
+        }
+      }
+    }
+  }
+`
+
+export const COLLECTIONS_QUERY = `
   query GetCollections($first: Int!, $after: String) {
     shop {
       collections(first: $first, after: $after) {
@@ -67,27 +87,7 @@ export const collectionsQuery = `
   }
 `
 
-export const blogsQuery = `
-  query GetBlogs($first: Int!, $after: String) {
-    shop {
-      blogs(first: $first, after: $after) {
-        pageInfo {
-          hasNextPage
-        }
-        edges {
-          cursor
-          node {
-            id
-            title
-            url
-          }
-        }
-      }
-    }
-  }
-`
-
-export const productsQuery = `
+export const PRODUCTS_QUERY = `
   query GetProducts($first: Int!, $after: String) {
     shop {
       products(first: $first, after: $after) {
@@ -149,7 +149,7 @@ export const productsQuery = `
   }
 `
 
-export const shopPoliciesQuery = `
+export const SHOP_POLICIES_QUERY = `
   query GetPolicies {
     shop {
       privacyPolicy {

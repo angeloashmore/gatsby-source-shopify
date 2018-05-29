@@ -3,11 +3,9 @@
   "version": "0.1.9",
   "description": "Gatsby source plugin for building websites using Shopfiy as a data source",
   "scripts": {
-    "build": "babel src --out-dir . --ignore __tests__",
+    "build": "babel src --out-dir .",
     "format": "prettier --write 'src/**/*.js' README.md",
     "prepublish": "npm run build",
-    "test": "jest",
-    "test:watch": "npm run test -- --watch",
     "watch": "npm run build -- --watch"
   },
   "homepage": "https://github.com/angeloashmore/gatsby-source-shopify",
@@ -25,24 +23,15 @@
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-plugin-rewire": "^1.1.0",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
-    "babel-plugin-transform-export-extensions": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "gatsby": "^1.9.36",
-    "graphql": "^0.11.3",
-    "graphql-tools": "^1.2.2",
-    "jest": "^21.1.0",
-    "joi": "^11.0.1",
-    "prettier": "^1.9.2"
+    "babel-preset-env": "^1.7.0",
+    "prettier": "^1.13.0"
   },
   "dependencies": {
-    "es6-error": "^4.0.2",
     "gatsby-node-helpers": "^0.3.0",
-    "graphql-client": "^2.0.0",
-    "json-stringify-safe": "^5.0.1",
+    "graphql-request": "^1.6.0",
     "lodash": "^4.17.4"
   }
 }

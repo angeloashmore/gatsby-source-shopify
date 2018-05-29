@@ -1,39 +1,14 @@
-import ExtendableError from 'es6-error'
 import { get, last } from 'lodash/fp'
 
-const UNAUTHORIZED_ERROR = new Error('Unauthorized')
-
 /**
- * Error with message formatted specifically for GraphQL error messages.
- */
-export class GraphQLError extends ExtendableError {
-  constructor({ message, locations, fields }) {
-    let str = message
-
-    if (locations)
-      str += ` at ${locations.map(l => Object.values(l).join(':')).join(', ')}`
-
-    if (fields) str += ` (${fields.join(' > ')})`
-
-    super(str)
-  }
-}
-
-/**
- * Request a query from a client. Throws an error if any are returned.
+ * Request a query from a client.
  */
 export const queryOnce = async (client, query, first = 250, after) => {
-  const { data, errors } = await client.query(
-    query,
-    { first, after },
-    (_req, res) => {
-      if (res.status === 401) throw UNAUTHORIZED_ERROR
-    },
-  )
-
-  if (errors) throw new GraphQLError(errors[0])
-
-  return data
+  try {
+    return await client.request(query, { first, after })
+  } catch (error) {
+    console.error(error.response.errors)
+  }
 }
 
 /**
