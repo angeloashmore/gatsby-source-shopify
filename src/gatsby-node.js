@@ -24,30 +24,25 @@ export const sourceNodes = async (gatsby, options) => {
   const {
     boundActionCreators: { createNode },
   } = gatsby
-  const { name, token, verbose = false } = options
+  const { name, token, verbose = true } = options
 
-  const client = new GraphQLClient(
-    `https://${name}.myshopify.com/api/graphql`,
-    {
-      headers: {
-        'X-Shopify-Storefront-Access-Token': token,
-      },
-    },
-  )
+  const endpoint = `https://${name}.myshopify.com/api/graphql`
+  const headers = { 'X-Shopify-Storefront-Access-Token': token }
+  const client = new GraphQLClient(endpoint, { headers })
 
-  const formatMsg = msg =>
-    chalk`\n{blue [gatsby-source-shopify/${name}]} ${msg}`
+  const formatMsg = msg => chalk`\n{blue gatsby-source-shopify/${name}} ${msg}`
 
   try {
     console.log(formatMsg('starting to fetch data from Shopify'))
     const msg = formatMsg('finished fetching data from Shopify')
+    const args = [client, createNode, formatMsg, verbose]
     console.time(msg)
     await Promise.all([
-      createArticles(client, createNode, formatMsg, verbose),
-      createBlogs(client, createNode, formatMsg, verbose),
-      createCollections(client, createNode, formatMsg, verbose),
-      createProductsAndChildren(client, createNode, formatMsg, verbose),
-      createShopPolicies(client, createNode, formatMsg, verbose),
+      createArticles(...args),
+      createBlogs(...args),
+      createCollections(...args),
+      createProductsAndChildren(...args),
+      createShopPolicies(...args),
     ])
     console.timeEnd(msg)
   } catch (e) {
