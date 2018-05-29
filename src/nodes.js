@@ -41,18 +41,16 @@ export const ProductNode = createNodeFactory(
   tap(node => {
     if (node.variants) {
       const variants = node.variants.edges.map(edge => edge.node)
+      const prices = variants.map(variant => variant.price)
+      const minPrice = Math.min(...prices)
+      const maxPrice = Math.max(...prices)
 
       node.variants___NODE = variants.map(variant =>
         generateNodeId(PRODUCT_VARIANT, variant.id),
       )
-
-      const variantPrices = variants
-        .map(variant => Number.parseFloat(variant.price))
-        .filter(Boolean)
-
       node.extras = {
-        minPrice: variantPrices.length ? Math.min(...variantPrices) : 0,
-        maxPrice: variantPrices.length ? Math.max(...variantPrices) : 0,
+        minPrice: prices.find(x => Number.parseFloat(x) === minPrice) || '0.00',
+        maxPrice: prices.find(x => Number.parseFloat(x) === maxPrice) || '0.00',
       }
     }
 
