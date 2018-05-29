@@ -8,6 +8,13 @@ export const ARTICLES_QUERY = `
         edges {
           cursor
           node {
+            author {
+              bio
+              email
+              firstName
+              lastName
+              name
+            }
             blog {
               id
             }
