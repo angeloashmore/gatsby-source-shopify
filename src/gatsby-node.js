@@ -19,7 +19,9 @@ import {
 } from './queries'
 
 export const sourceNodes = async (gatsby, options) => {
-  const { boundActionCreators: { createNode } } = gatsby
+  const {
+    boundActionCreators: { createNode },
+  } = gatsby
   const { name, token } = options
 
   const client = new GraphQLClient(
@@ -40,12 +42,22 @@ export const sourceNodes = async (gatsby, options) => {
 
 const createArticles = async (client, createNode) => {
   const articles = await queryAll(client, ['shop', 'articles'], ARTICLES_QUERY)
-  articles.forEach(pipe(ArticleNode, createNode))
+  articles.forEach(
+    pipe(
+      ArticleNode,
+      createNode,
+    ),
+  )
 }
 
 const createBlogs = async (client, createNode) => {
   const blogs = await queryAll(client, ['shop', 'blogs'], BLOGS_QUERY)
-  blogs.forEach(pipe(BlogNode, createNode))
+  blogs.forEach(
+    pipe(
+      BlogNode,
+      createNode,
+    ),
+  )
 }
 
 const createCollections = async (client, createNode) => {
@@ -54,7 +66,12 @@ const createCollections = async (client, createNode) => {
     ['shop', 'collections'],
     COLLECTIONS_QUERY,
   )
-  collections.forEach(pipe(CollectionNode, createNode))
+  collections.forEach(
+    pipe(
+      CollectionNode,
+      createNode,
+    ),
+  )
 }
 
 const createProductsAndChildren = async (client, createNode) => {
@@ -63,16 +80,27 @@ const createProductsAndChildren = async (client, createNode) => {
     createNode(ProductNode(product))
 
     product.variants.edges.forEach(
-      pipe(edge => ProductVariantNode(edge.node), createNode),
+      pipe(
+        edge => ProductVariantNode(edge.node),
+        createNode,
+      ),
     )
 
-    product.options.forEach(pipe(ProductOptionNode, createNode))
+    product.options.forEach(
+      pipe(
+        ProductOptionNode,
+        createNode,
+      ),
+    )
   })
 }
 
 const createShopPolicies = async (client, createNode) => {
   const { shop: policies } = await queryOnce(client, SHOP_POLICIES_QUERY)
   Object.entries(policies).forEach(
-    pipe(([type, policy]) => ShopPolicyNode(policy, { type }), createNode),
+    pipe(
+      ([type, policy]) => ShopPolicyNode(policy, { type }),
+      createNode,
+    ),
   )
 }
