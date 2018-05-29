@@ -96,7 +96,7 @@ The following data types are available:
 | **ProductVariant** | Represents a different version of a product, such as differing sizes or differing colors.                             |
 | **ShopPolicy**     | Policy that a merchant has configured for their store, such as their refund or privacy policy.                        |
 
-For each data type listed about, `shopify${typeName}` and
+For each data type listed above, `shopify${typeName}` and
 `allShopify${typeName}` is made available. Nodes that are closely related, such
 as `Article` and `Comment`, are provided as node fields as described below.
 
@@ -104,7 +104,7 @@ as `Article` and `Comment`, are provided as node fields as described below.
 fields for each node. Utilize Gatsby's built-in GraphQL tool to discover the
 types and properties available.
 
-### Query `Article`
+### Query articles
 
 ```graphql
 {
@@ -138,7 +138,7 @@ types and properties available.
 The associated blog data is provided on the `blog` field. Article comments are
 provided on the `comments` field.
 
-### Query `Blog`
+### Query blogs
 
 Blog data is provided on the `blog` field on `Article`, but it can be queried
 directly like the following:
@@ -157,7 +157,7 @@ directly like the following:
 }
 ```
 
-### Query `Comment`
+### Query article comments
 
 Comments are provided on the `comments` field on `Article`, but they can be
 queried directly like the following:
@@ -179,7 +179,7 @@ queried directly like the following:
 }
 ```
 
-### Query `Collection`
+### Query product collections
 
 Products in the collection are provided on the `products` field.
 
@@ -207,7 +207,7 @@ Products in the collection are provided on the `products` field.
 }
 ```
 
-### Query `Product`
+### Query products
 
 Product variants and options are provided on the `variants` and `options`
 fields.
@@ -244,7 +244,7 @@ fields.
 }
 ```
 
-### Query `ProductOption`
+### Query product options
 
 Product options are provided on the `options` field on `Product`, but they can
 be queried directly like the following:
@@ -263,7 +263,7 @@ be queried directly like the following:
 }
 ```
 
-### Query `ProductVariant`
+### Query product variants
 
 Product variants are provided on the `variants` field on `Product`, but they
 can be queried directly like the following:
@@ -291,7 +291,7 @@ can be queried directly like the following:
 }
 ```
 
-### Query `ShopPolicy`
+### Query shop policies
 
 Shop policies include the following types:
 
