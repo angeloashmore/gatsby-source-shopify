@@ -1,5 +1,7 @@
 import { GraphQLClient } from 'graphql-request'
 import { pipe } from 'lodash/fp'
+import chalk from 'chalk'
+import prettyjson from 'prettyjson'
 import { queryAll, queryOnce } from './lib'
 import {
   ArticleNode,
@@ -33,14 +35,28 @@ export const sourceNodes = async (gatsby, options) => {
     },
   )
 
-  await createArticles(client, createNode)
-  await createBlogs(client, createNode)
-  await createCollections(client, createNode)
-  await createProductsAndChildren(client, createNode)
-  await createShopPolicies(client, createNode)
+  const log = msg =>
+    console.log(chalk`\n{blue [gatsby-source-shopify/${name}]} ${msg}`)
+
+  try {
+    await createArticles(client, createNode, log)
+    await createBlogs(client, createNode, log)
+    await createCollections(client, createNode, log)
+    await createProductsAndChildren(client, createNode, log)
+    await createShopPolicies(client, createNode, log)
+  } catch (e) {
+    console.error(chalk`\n{red error} an error occured while sourcing data`)
+
+    if (!e.hasOwnProperty('request')) throw e
+
+    const prettyjsonOptions = { keysColor: 'red', dashColor: 'red' }
+    console.error(prettyjson.render(e.response.errors, prettyjsonOptions))
+    console.error(prettyjson.render(e.request, prettyjsonOptions))
+  }
 }
 
-const createArticles = async (client, createNode) => {
+const createArticles = async (client, createNode, log) => {
+  log('fetching articles')
   const articles = await queryAll(client, ['shop', 'articles'], ARTICLES_QUERY)
   articles.forEach(
     pipe(
@@ -50,7 +66,8 @@ const createArticles = async (client, createNode) => {
   )
 }
 
-const createBlogs = async (client, createNode) => {
+const createBlogs = async (client, createNode, log) => {
+  log('fetching blogs')
   const blogs = await queryAll(client, ['shop', 'blogs'], BLOGS_QUERY)
   blogs.forEach(
     pipe(
@@ -60,7 +77,8 @@ const createBlogs = async (client, createNode) => {
   )
 }
 
-const createCollections = async (client, createNode) => {
+const createCollections = async (client, createNode, log) => {
+  log('fetching collections')
   const collections = await queryAll(
     client,
     ['shop', 'collections'],
@@ -74,7 +92,8 @@ const createCollections = async (client, createNode) => {
   )
 }
 
-const createProductsAndChildren = async (client, createNode) => {
+const createProductsAndChildren = async (client, createNode, log) => {
+  log('fetching products')
   const products = await queryAll(client, ['shop', 'products'], PRODUCTS_QUERY)
   products.forEach(product => {
     createNode(ProductNode(product))
@@ -95,7 +114,8 @@ const createProductsAndChildren = async (client, createNode) => {
   })
 }
 
-const createShopPolicies = async (client, createNode) => {
+const createShopPolicies = async (client, createNode, log) => {
+  log('fetching policies')
   const { shop: policies } = await queryOnce(client, SHOP_POLICIES_QUERY)
   Object.entries(policies).forEach(
     pipe(

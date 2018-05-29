@@ -3,13 +3,8 @@ import { get, last } from 'lodash/fp'
 /**
  * Request a query from a client.
  */
-export const queryOnce = async (client, query, first = 250, after) => {
-  try {
-    return await client.request(query, { first, after })
-  } catch (error) {
-    console.error(error.response.errors)
-  }
-}
+export const queryOnce = async (client, query, first = 250, after) =>
+  await client.request(query, { first, after })
 
 /**
  * Get all paginated data from a query. Will execute multiple requests as
