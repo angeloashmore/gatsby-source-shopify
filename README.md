@@ -15,6 +15,7 @@ stores via the [Shopify Storefront API][shopify-storefront-api].
 | **Article**         | A blog entry.                                                                                                         |
 | **Blog**            | Collection of articles.                                                                                               |
 | **Collection**      | Represents a grouping of products that a shop owner can create to organize them or make their shops easier to browse. |
+| **Comment**         | A blog entry comment.                                                                                                 |
 | **Product**         | Represents an individual item for sale in a Shopify store.                                                            |
 | **Product Option**  | Custom product property names.                                                                                        |
 | **Product Variant** | Represents a different version of a product, such as differing sizes or differing colors.                             |
