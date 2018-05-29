@@ -1,5 +1,6 @@
 import createNodeHelpers from 'gatsby-node-helpers'
 import { tap } from 'lodash/fp'
+import { map } from 'p-iteration'
 import { createRemoteFileNode } from 'gatsby-source-filesystem'
 
 // Node prefix
@@ -18,7 +19,7 @@ const { createNodeFactory, generateNodeId } = createNodeHelpers({
   typePrefix: TYPE_PREFIX,
 })
 
-const downloadImage = async (
+const downloadImageAndCreateFileNode = async (
   { id, url },
   { createNode, touchNode, store, cache },
 ) => {
@@ -49,7 +50,7 @@ export const ArticleNode = imageArgs =>
     if (node.blog) node.blog___NODE = generateNodeId(BLOG, node.blog.id)
 
     if (node.image)
-      node.image.localFile___NODE = await downloadImage(
+      node.image.localFile___NODE = await downloadImageAndCreateFileNode(
         { id: node.image.id, url: node.image.src },
         imageArgs,
       )
@@ -57,7 +58,7 @@ export const ArticleNode = imageArgs =>
     return node
   })
 
-export const BlogNode = imageArgs => createNodeFactory(BLOG)
+export const BlogNode = _imageArgs => createNodeFactory(BLOG)
 
 export const CollectionNode = imageArgs =>
   createNodeFactory(COLLECTION, async node => {
@@ -67,7 +68,7 @@ export const CollectionNode = imageArgs =>
       )
 
     if (node.image)
-      node.image.localFile___NODE = await downloadImage(
+      node.image.localFile___NODE = await downloadImageAndCreateFileNode(
         { id: node.image.id, url: node.image.src },
         imageArgs,
       )
@@ -97,26 +98,24 @@ export const ProductNode = imageArgs =>
         generateNodeId(PRODUCT_OPTION, option.id),
       )
 
-    if (node.images && node.images.edges && node.images.edges.length > 0)
-      node.images = await Promise.all(
-        node.images.edges.map(async edge => {
-          edge.node.localFile___NODE = await downloadImage(
-            { id: edge.node.id, url: edge.node.originalSrc },
-            imageArgs,
-          )
-          return edge.node
-        }),
-      )
+    if (node.images && node.images.edges)
+      node.images = await map(node.images.edges, async edge => {
+        edge.node.localFile___NODE = await downloadImageAndCreateFileNode(
+          { id: edge.node.id, url: edge.node.originalSrc },
+          imageArgs,
+        )
+        return edge.node
+      })
 
     return node
   })
 
-export const ProductOptionNode = imageArgs => createNodeFactory(PRODUCT_OPTION)
+export const ProductOptionNode = _imageArgs => createNodeFactory(PRODUCT_OPTION)
 
 export const ProductVariantNode = imageArgs =>
   createNodeFactory(PRODUCT_VARIANT, async node => {
     if (node.image)
-      node.image.localFile___NODE = await downloadImage(
+      node.image.localFile___NODE = await downloadImageAndCreateFileNode(
         { id: node.image.id, url: node.image.originalSrc },
         imageArgs,
       )

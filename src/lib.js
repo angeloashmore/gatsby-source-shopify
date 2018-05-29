@@ -1,4 +1,26 @@
+import { GraphQLClient } from 'graphql-request'
+import prettyjson from 'prettyjson'
 import { get, last } from 'lodash/fp'
+
+/**
+ * Create a Shopify Storefront GraphQL client for the provided name and token.
+ */
+export const createClient = (name, token) =>
+  new GraphQLClient(`https://${name}.myshopify.com/api/graphql`, {
+    headers: {
+      'X-Shopify-Storefront-Access-Token': token,
+    },
+  })
+
+/**
+ * Print an error from a GraphQL client
+ */
+export const printGraphQLError = e => {
+  const prettyjsonOptions = { keysColor: 'red', dashColor: 'red' }
+
+  console.error(prettyjson.render(e.response.errors, prettyjsonOptions))
+  console.error(prettyjson.render(e.request, prettyjsonOptions))
+}
 
 /**
  * Request a query from a client.

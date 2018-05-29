@@ -1,8 +1,7 @@
-import { GraphQLClient } from 'graphql-request'
 import { pipe } from 'lodash/fp'
 import chalk from 'chalk'
-import prettyjson from 'prettyjson'
-import { queryAll, queryOnce } from './lib'
+import { forEach } from 'p-iteration'
+import { createClient, printGraphQLError, queryAll, queryOnce } from './lib'
 import {
   ArticleNode,
   BlogNode,
@@ -24,136 +23,87 @@ export const sourceNodes = async (
   { boundActionCreators: { createNode, touchNode }, store, cache },
   { name, token, verbose = true },
 ) => {
-  const endpoint = `https://${name}.myshopify.com/api/graphql`
-  const headers = { 'X-Shopify-Storefront-Access-Token': token }
-  const client = new GraphQLClient(endpoint, { headers })
+  const client = createClient(name, token)
 
+  // Convenience function to namespace console messages.
   const formatMsg = msg => chalk`\n{blue gatsby-source-shopify/${name}} ${msg}`
 
   try {
     console.log(formatMsg('starting to fetch data from Shopify'))
-    const msg = formatMsg('finished fetching data from Shopify')
+
+    // Arguments used for file node creation.
     const imageArgs = { createNode, touchNode, store, cache }
+
+    // Arguments used for node creation.
     const args = { client, createNode, formatMsg, verbose, imageArgs }
+
+    // Message printed when fetching is complete.
+    const msg = formatMsg('finished fetching data from Shopify')
+
     console.time(msg)
     await Promise.all([
-      createArticles(args),
-      createBlogs(args),
-      createCollections(args),
-      createProductsAndChildren(args),
+      createNodes('articles', ARTICLES_QUERY, ArticleNode, args),
+      createNodes('blogs', BLOGS_QUERY, BlogNode, args),
+      createNodes('collections', COLLECTIONS_QUERY, CollectionNode, args),
+      createNodes('products', PRODUCTS_QUERY, ProductNode, args, async x => {
+        if (x.variants)
+          await forEach(x.variants.edges, async edge =>
+            createNode(await ProductVariantNode(imageArgs)(edge.node)),
+          )
+
+        if (x.options)
+          await forEach(x.options, async option =>
+            createNode(await ProductOptionNode(imageArgs)(option)),
+          )
+      }),
       createShopPolicies(args),
     ])
     console.timeEnd(msg)
   } catch (e) {
     console.error(chalk`\n{red error} an error occured while sourcing data`)
 
+    // If not a GraphQL request error, let Gatsby print the error.
     if (!e.hasOwnProperty('request')) throw e
 
-    const prettyjsonOptions = { keysColor: 'red', dashColor: 'red' }
-    console.error(prettyjson.render(e.response.errors, prettyjsonOptions))
-    console.error(prettyjson.render(e.request, prettyjsonOptions))
+    printGraphQLError(e)
   }
 }
 
-const createArticles = async ({
-  client,
-  createNode,
-  formatMsg,
-  verbose,
-  imageArgs,
-}) => {
-  const msg = formatMsg('fetched and processed articles')
+/**
+ * Fetch and create nodes for the provided endpoint, query, and node factory.
+ */
+const createNodes = async (
+  endpoint,
+  query,
+  nodeFactory,
+  { client, createNode, formatMsg, verbose, imageArgs },
+  f = async () => {},
+) => {
+  // Message printed when fetching is complete.
+  const msg = formatMsg(`fetched and processed ${endpoint}`)
 
   if (verbose) console.time(msg)
-  const articles = await queryAll(client, ['shop', 'articles'], ARTICLES_QUERY)
-  await Promise.all(
-    articles.map(async article => {
-      createNode(await ArticleNode(imageArgs)(article))
-    }),
+  await forEach(
+    await queryAll(client, ['shop', endpoint], query),
+    async entity => {
+      const node = await nodeFactory(imageArgs)(entity)
+      createNode(node)
+      await f(entity)
+    },
   )
   if (verbose) console.timeEnd(msg)
 }
 
-const createBlogs = async ({
-  client,
-  createNode,
-  formatMsg,
-  verbose,
-  imageArgs,
-}) => {
-  const msg = formatMsg('fetched and processed blogs')
-
-  if (verbose) console.time(msg)
-  const blogs = await queryAll(client, ['shop', 'blogs'], BLOGS_QUERY)
-  blogs.forEach(
-    pipe(
-      BlogNode(imageArgs),
-      createNode,
-    ),
-  )
-  if (verbose) console.timeEnd(msg)
-}
-
-const createCollections = async ({
-  client,
-  createNode,
-  formatMsg,
-  verbose,
-  imageArgs,
-}) => {
-  const msg = formatMsg('fetched and processed collections')
-
-  if (verbose) console.time(msg)
-  const collections = await queryAll(
-    client,
-    ['shop', 'collections'],
-    COLLECTIONS_QUERY,
-  )
-  await Promise.all(
-    collections.map(async collection => {
-      createNode(await CollectionNode(imageArgs)(collection))
-    }),
-  )
-  if (verbose) console.timeEnd(msg)
-}
-
-const createProductsAndChildren = async ({
-  client,
-  createNode,
-  formatMsg,
-  verbose,
-  imageArgs,
-}) => {
-  const msg = formatMsg('fetched and processed products')
-
-  if (verbose) console.time(msg)
-  const products = await queryAll(client, ['shop', 'products'], PRODUCTS_QUERY)
-  await Promise.all(
-    products.map(async product => {
-      createNode(await ProductNode(imageArgs)(product))
-
-      await Promise.all(
-        product.variants.edges.map(async edge => {
-          createNode(await ProductVariantNode(imageArgs)(edge.node))
-        }),
-      )
-
-      await Promise.all(
-        product.options.map(async option => {
-          createNode(await ProductOptionNode(imageArgs)(option))
-        }),
-      )
-    }),
-  )
-  if (verbose) console.timeEnd(msg)
-}
-
+/**
+ * Fetch and create nodes for shop policies.
+ */
 const createShopPolicies = async ({
   client,
   createNode,
   formatMsg,
   verbose,
 }) => {
+  // Message printed when fetching is complete.
   const msg = formatMsg('fetched and processed policies')
 
   if (verbose) console.time(msg)
