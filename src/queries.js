@@ -134,6 +134,10 @@ export const PRODUCTS_QUERY = `
                     originalSrc
                   }
                   price
+                  selectedOptions {
+                    name
+                    value
+                  }
                   sku
                   title
                   weight
