@@ -6,6 +6,7 @@ import {
   ArticleNode,
   BlogNode,
   CollectionNode,
+  CommentNode,
   ProductNode,
   ProductOptionNode,
   ProductVariantNode,
@@ -42,7 +43,12 @@ export const sourceNodes = async (
 
     console.time(msg)
     await Promise.all([
-      createNodes('articles', ARTICLES_QUERY, ArticleNode, args),
+      createNodes('articles', ARTICLES_QUERY, ArticleNode, args, async x => {
+        if (x.comments)
+          await forEach(x.comments.edges, async edge =>
+            createNode(await CommentNode(imageArgs)(edge.node)),
+          )
+      }),
       createNodes('blogs', BLOGS_QUERY, BlogNode, args),
       createNodes('collections', COLLECTIONS_QUERY, CollectionNode, args),
       createNodes('products', PRODUCTS_QUERY, ProductNode, args, async x => {

@@ -10,6 +10,7 @@ const TYPE_PREFIX = 'Shopify'
 const ARTICLE = 'Article'
 const BLOG = 'Blog'
 const COLLECTION = 'Collection'
+const COMMENT = 'Comment'
 const PRODUCT = 'Product'
 const PRODUCT_OPTION = 'ProductOption'
 const PRODUCT_VARIANT = 'ProductVariant'
@@ -49,6 +50,11 @@ export const ArticleNode = imageArgs =>
   createNodeFactory(ARTICLE, async node => {
     if (node.blog) node.blog___NODE = generateNodeId(BLOG, node.blog.id)
 
+    if (node.comments)
+      node.comments___NODE = node.comments.edges.map(edge =>
+        generateNodeId(COMMENT, edge.node.id),
+      )
+
     if (node.image)
       node.image.localFile___NODE = await downloadImageAndCreateFileNode(
         { id: node.image.id, url: node.image.src },
@@ -75,6 +81,8 @@ export const CollectionNode = imageArgs =>
 
     return node
   })
+
+export const CommentNode = _imageArgs => createNodeFactory(COMMENT)
 
 export const ProductNode = imageArgs =>
   createNodeFactory(PRODUCT, async node => {

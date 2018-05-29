@@ -18,6 +18,19 @@ export const ARTICLES_QUERY = `
             blog {
               id
             }
+            comments(first: 250) {
+              edges {
+                node {
+                  author {
+                    email
+                    name
+                  }
+                  content
+                  contentHtml
+                  id
+                }
+              }
+            }
             content
             contentHtml
             excerpt
