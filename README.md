@@ -8,18 +8,6 @@ stores via the [Shopify Storefront API][shopify-storefront-api].
 - Provides public shop data available via the [Shopify Storefront API][shopify-storefront-api]
 - Supports `gatsby-transformer-sharp` and `gatsby-image` for product and
   article images
-- Supports the following data types:
-
-| Name                | Description                                                                                                           |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| **Article**         | A blog entry.                                                                                                         |
-| **Blog**            | Collection of articles.                                                                                               |
-| **Collection**      | Represents a grouping of products that a shop owner can create to organize them or make their shops easier to browse. |
-| **Comment**         | A blog entry comment.                                                                                                 |
-| **Product**         | Represents an individual item for sale in a Shopify store.                                                            |
-| **Product Option**  | Custom product property names.                                                                                        |
-| **Product Variant** | Represents a different version of a product, such as differing sizes or differing colors.                             |
-| **Shop Policy**     | Policy that a merchant has configured for their store, such as their refund or privacy policy.                        |
 
 ## Install
 
