@@ -32,6 +32,7 @@
   "dependencies": {
     "chalk": "^2.4.1",
     "gatsby-node-helpers": "^0.3.0",
+    "gatsby-source-filesystem": "^1.5.36",
     "graphql-request": "^1.6.0",
     "lodash": "^4.17.4",
     "prettyjson": "^1.2.1"
