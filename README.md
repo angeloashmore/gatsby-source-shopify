@@ -106,6 +106,9 @@ types and properties available.
 
 ### Query articles
 
+The associated blog data is provided on the `blog` field. Article comments are
+provided on the `comments` field.
+
 ```graphql
 {
   allShopifyArticle {
@@ -134,9 +137,6 @@ types and properties available.
   }
 }
 ```
-
-The associated blog data is provided on the `blog` field. Article comments are
-provided on the `comments` field.
 
 ### Query blogs
 
