@@ -20,12 +20,10 @@ import {
   SHOP_POLICIES_QUERY,
 } from './queries'
 
-export const sourceNodes = async (gatsby, options) => {
-  const {
-    boundActionCreators: { createNode },
-  } = gatsby
-  const { name, token, verbose = true } = options
-
+export const sourceNodes = async (
+  { boundActionCreators: createNode },
+  { name, token, verbose = true },
+) => {
   const endpoint = `https://${name}.myshopify.com/api/graphql`
   const headers = { 'X-Shopify-Storefront-Access-Token': token }
   const client = new GraphQLClient(endpoint, { headers })
