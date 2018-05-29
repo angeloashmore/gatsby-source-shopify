@@ -1,17 +1,19 @@
 {
   "sourceMaps": true,
-  "plugins": [
-    "transform-async-to-generator",
-    "transform-es2015-modules-commonjs",
-    "transform-export-extensions",
-    "transform-object-rest-spread",
-    "transform-runtime",
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "node": 4.0,
+          "uglify": true
+        }
+      }
+    ]
   ],
-  "env": {
-    "test": {
-      "plugins": [
-        "rewire"
-      ]
-    }
-  }
+  "plugins": [
+    "transform-runtime",
+    "transform-object-rest-spread",
+    "transform-async-to-generator"
+  ]
 }

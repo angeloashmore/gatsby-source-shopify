@@ -1,40 +1,32 @@
-import ExtendableError from 'es6-error'
+import { GraphQLClient } from 'graphql-request'
+import prettyjson from 'prettyjson'
 import { get, last } from 'lodash/fp'
 
-const UNAUTHORIZED_ERROR = new Error('Unauthorized')
-
 /**
- * Error with message formatted specifically for GraphQL error messages.
+ * Create a Shopify Storefront GraphQL client for the provided name and token.
  */
-export class GraphQLError extends ExtendableError {
-  constructor({ message, locations, fields }) {
-    let str = message
-
-    if (locations)
-      str += ` at ${locations.map(l => Object.values(l).join(':')).join(', ')}`
-
-    if (fields) str += ` (${fields.join(' > ')})`
-
-    super(str)
-  }
-}
-
-/**
- * Request a query from a client. Throws an error if any are returned.
- */
-export const queryOnce = async (client, query, first = 250, after) => {
-  const { data, errors } = await client.query(
-    query,
-    { first, after },
-    (_req, res) => {
-      if (res.status === 401) throw UNAUTHORIZED_ERROR
+export const createClient = (shopName, accessToken) =>
+  new GraphQLClient(`https://${shopName}.myshopify.com/api/graphql`, {
+    headers: {
+      'X-Shopify-Storefront-Access-Token': accessToken,
     },
-  )
+  })
 
-  if (errors) throw new GraphQLError(errors[0])
+/**
+ * Print an error from a GraphQL client
+ */
+export const printGraphQLError = e => {
+  const prettyjsonOptions = { keysColor: 'red', dashColor: 'red' }
 
-  return data
+  console.error(prettyjson.render(e.response.errors, prettyjsonOptions))
+  console.error(prettyjson.render(e.request, prettyjsonOptions))
 }
+
+/**
+ * Request a query from a client.
+ */
+export const queryOnce = async (client, query, first = 250, after) =>
+  await client.request(query, { first, after })
 
 /**
  * Get all paginated data from a query. Will execute multiple requests as

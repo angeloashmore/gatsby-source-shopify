@@ -1,6 +1,6 @@
 *.log
-node_modules
 /gatsby-node.js
 /lib.js
 /nodes.js
 /queries.js
+node_modules
