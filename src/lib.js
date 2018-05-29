@@ -5,10 +5,10 @@ import { get, last } from 'lodash/fp'
 /**
  * Create a Shopify Storefront GraphQL client for the provided name and token.
  */
-export const createClient = (name, token) =>
-  new GraphQLClient(`https://${name}.myshopify.com/api/graphql`, {
+export const createClient = (shopName, accessToken) =>
+  new GraphQLClient(`https://${shopName}.myshopify.com/api/graphql`, {
     headers: {
-      'X-Shopify-Storefront-Access-Token': token,
+      'X-Shopify-Storefront-Access-Token': accessToken,
     },
   })
 

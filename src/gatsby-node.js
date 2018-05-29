@@ -22,12 +22,13 @@ import {
 
 export const sourceNodes = async (
   { boundActionCreators: { createNode, touchNode }, store, cache },
-  { name, token, verbose = true },
+  { shopName, accessToken, verbose = true },
 ) => {
-  const client = createClient(name, token)
+  const client = createClient(shopName, accessToken)
 
   // Convenience function to namespace console messages.
-  const formatMsg = msg => chalk`\n{blue gatsby-source-shopify/${name}} ${msg}`
+  const formatMsg = msg =>
+    chalk`\n{blue gatsby-source-shopify/${shopName}} ${msg}`
 
   try {
     console.log(formatMsg('starting to fetch data from Shopify'))
