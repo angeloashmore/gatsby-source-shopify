@@ -17,13 +17,11 @@ export const createClient = (shopName, accessToken) =>
  */
 export const printGraphQLError = e => {
   const prettyjsonOptions = { keysColor: 'red', dashColor: 'red' }
-  console.error(e)
 
-  // if (e.response && e.response.errors)
-  //   console.error(prettyjson.render(e.response.errors, prettyjsonOptions))
+  if (e.response && e.response.errors)
+    console.error(prettyjson.render(e.response.errors, prettyjsonOptions))
 
-  // if (e.request)
-  //   console.error(prettyjson.render(e.request, prettyjsonOptions))
+  if (e.request) console.error(prettyjson.render(e.request, prettyjsonOptions))
 }
 
 /**
