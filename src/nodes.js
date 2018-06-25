@@ -88,17 +88,10 @@ export const ProductNode = imageArgs =>
   createNodeFactory(PRODUCT, async node => {
     if (node.variants) {
       const variants = node.variants.edges.map(edge => edge.node)
-      const prices = variants.map(variant => variant.price)
-      const minPrice = Math.min(...prices)
-      const maxPrice = Math.max(...prices)
 
       node.variants___NODE = variants.map(variant =>
         generateNodeId(PRODUCT_VARIANT, variant.id),
       )
-      node.extras = {
-        minPrice: prices.find(x => Number.parseFloat(x) === minPrice) || '0.00',
-        maxPrice: prices.find(x => Number.parseFloat(x) === maxPrice) || '0.00',
-      }
     }
 
     if (node.options)
