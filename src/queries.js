@@ -137,6 +137,16 @@ export const PRODUCTS_QUERY = `
               name
               values
             }
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+              maxVariantPrice {
+                amount
+                currencyCode
+              }
+            }
             productType
             publishedAt
             tags
