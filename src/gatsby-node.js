@@ -115,11 +115,13 @@ const createShopPolicies = async ({
 
   if (verbose) console.time(msg)
   const { shop: policies } = await queryOnce(client, SHOP_POLICIES_QUERY)
-  Object.entries(policies).forEach(
-    pipe(
-      ([type, policy]) => ShopPolicyNode(policy, { type }),
-      createNode,
-    ),
-  )
+  Object.entries(policies)
+    .filter(([_, policy]) => Boolean(policy))
+    .forEach(
+      pipe(
+        ([type, policy]) => ShopPolicyNode(policy, { type }),
+        createNode,
+      ),
+    )
   if (verbose) console.timeEnd(msg)
 }
