@@ -31,7 +31,7 @@ const downloadImageAndCreateFileNode = async (
 
   if (cacheMediaData) {
     fileNodeID = cacheMediaData.fileNodeID
-    touchNode(fileNodeID)
+    touchNode({ nodeId: fileNodeID })
     return fileNodeID
   }
 
