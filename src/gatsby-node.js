@@ -21,7 +21,7 @@ import {
 } from './queries'
 
 export const sourceNodes = async (
-  { boundActionCreators: { createNode, touchNode }, store, cache },
+  { boundActionCreators: { createNode, touchNode, createNodeId }, store, cache },
   { shopName, accessToken, verbose = true },
 ) => {
   const client = createClient(shopName, accessToken)
@@ -34,10 +34,10 @@ export const sourceNodes = async (
     console.log(formatMsg('starting to fetch data from Shopify'))
 
     // Arguments used for file node creation.
-    const imageArgs = { createNode, touchNode, store, cache }
+    const imageArgs = { createNode, createNodeId, touchNode, store, cache }
 
     // Arguments used for node creation.
-    const args = { client, createNode, formatMsg, verbose, imageArgs }
+    const args = { client, createNode, createNodeId, formatMsg, verbose, imageArgs }
 
     // Message printed when fetching is complete.
     const msg = formatMsg('finished fetching data from Shopify')

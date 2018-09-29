@@ -22,7 +22,7 @@ const { createNodeFactory, generateNodeId } = createNodeHelpers({
 
 const downloadImageAndCreateFileNode = async (
   { id, url },
-  { createNode, touchNode, store, cache },
+  { createNode, createNodeId, touchNode, store, cache },
 ) => {
   let fileNodeID
 
@@ -31,11 +31,11 @@ const downloadImageAndCreateFileNode = async (
 
   if (cacheMediaData) {
     fileNodeID = cacheMediaData.fileNodeID
-    touchNode(fileNodeID)
+    touchNode({nodeId: fileNodeID})
     return fileNodeID
   }
 
-  const fileNode = await createRemoteFileNode({ url, store, cache, createNode })
+  const fileNode = await createRemoteFileNode({ url, store, cache, createNode, createNodeId })
 
   if (fileNode) {
     fileNodeID = fileNode.id
@@ -102,7 +102,7 @@ export const ProductNode = imageArgs =>
     if (node.images && node.images.edges)
       node.images = await map(node.images.edges, async edge => {
         edge.node.localFile___NODE = await downloadImageAndCreateFileNode(
-          { id: edge.node.id, url: edge.node.originalSrc },
+          { id: edge.node.id, url: edge.node.originalSrc && edge.node.originalSrc.split("?")[0] },
           imageArgs,
         )
         return edge.node
@@ -117,7 +117,7 @@ export const ProductVariantNode = imageArgs =>
   createNodeFactory(PRODUCT_VARIANT, async node => {
     if (node.image)
       node.image.localFile___NODE = await downloadImageAndCreateFileNode(
-        { id: node.image.id, url: node.image.originalSrc },
+        { id: node.image.id, url: node.image.originalSrc && node.image.originalSrc.split("?")[0]},
         imageArgs,
       )
 
