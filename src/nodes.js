@@ -2,6 +2,7 @@ import createNodeHelpers from 'gatsby-node-helpers'
 import { tap } from 'lodash/fp'
 import { map } from 'p-iteration'
 import { createRemoteFileNode } from 'gatsby-source-filesystem'
+var crypto = require("crypto");
 
 // Node prefix
 const TYPE_PREFIX = 'Shopify'
@@ -15,8 +16,8 @@ const PRODUCT = 'Product'
 const PRODUCT_OPTION = 'ProductOption'
 const PRODUCT_VARIANT = 'ProductVariant'
 const SHOP_POLICY = 'ShopPolicy'
-
-const { createNodeFactory, generateNodeId } = createNodeHelpers({
+const PRODUCT_TYPE = 'ProductType'
+const { createNodeFactory, generateNodeId, generateTypeName } = createNodeHelpers({
   typePrefix: TYPE_PREFIX,
 })
 
@@ -83,6 +84,22 @@ export const CollectionNode = imageArgs =>
   })
 
 export const CommentNode = _imageArgs => createNodeFactory(COMMENT)
+export const ProductTypeNode = imageArgs => {
+  return entity => {
+    const nodeContent = entity;
+    const nodeContentDigest = crypto
+      .createHash("md5")
+      .update(nodeContent)
+      .digest("hex");
+    return ({id: generateNodeId(PRODUCT_TYPE, entity.replace(" ", "_")), name: entity, children: [],
+      parent: null,
+      internal: {
+        type: generateTypeName(PRODUCT_TYPE),
+        content: nodeContent,
+        contentDigest: nodeContentDigest
+      }});
+  }
+};
 
 export const ProductNode = imageArgs =>
   createNodeFactory(PRODUCT, async node => {

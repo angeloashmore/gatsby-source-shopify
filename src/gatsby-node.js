@@ -11,6 +11,7 @@ import {
   ProductOptionNode,
   ProductVariantNode,
   ShopPolicyNode,
+  ProductTypeNode
 } from './nodes'
 import {
   ARTICLES_QUERY,
@@ -18,6 +19,7 @@ import {
   COLLECTIONS_QUERY,
   PRODUCTS_QUERY,
   SHOP_POLICIES_QUERY,
+  PRODUCT_TYPES_QUERY
 } from './queries'
 
 export const sourceNodes = async (
@@ -52,6 +54,7 @@ export const sourceNodes = async (
       }),
       createNodes('blogs', BLOGS_QUERY, BlogNode, args),
       createNodes('collections', COLLECTIONS_QUERY, CollectionNode, args),
+      createNodes('productTypes', PRODUCT_TYPES_QUERY, ProductTypeNode, args),
       createNodes('products', PRODUCTS_QUERY, ProductNode, args, async x => {
         if (x.variants)
           await forEach(x.variants.edges, async edge =>
