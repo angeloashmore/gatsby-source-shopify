@@ -1,6 +1,6 @@
 {
   "name": "gatsby-source-shopify2",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "Gatsby source plugin for building websites using Shopfiy as a data source. This is based on the original plugin along with some bug fixes for gatsby v2 and downloading images for products.",
   "scripts": {
     "build": "babel src --out-dir .",

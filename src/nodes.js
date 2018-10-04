@@ -76,12 +76,11 @@ export const CollectionNode = imageArgs =>
 
     if (node.image)
       node.image.localFile___NODE = await downloadImageAndCreateFileNode(
-        { id: node.image.id, url: node.image.src },
+        { id: node.image.id, url: node.image.src && node.image.src.split("?")[0] },
         imageArgs,
-      )
-
+      );
     return node
-  })
+  });
 
 export const CommentNode = _imageArgs => createNodeFactory(COMMENT)
 export const ProductTypeNode = imageArgs => {
