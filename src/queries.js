@@ -212,7 +212,11 @@ export const PRODUCT_TYPES_QUERY = `
   query GetProductTypes($first: Int!) {
     shop {
       productTypes(first: $first) {
+        pageInfo {
+          hasNextPage
+        }
         edges {
+          cursor
           node
         }
       }

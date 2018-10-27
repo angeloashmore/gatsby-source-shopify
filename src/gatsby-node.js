@@ -11,7 +11,7 @@ import {
   ProductOptionNode,
   ProductVariantNode,
   ShopPolicyNode,
-  ProductTypeNode
+  ProductTypeNode,
 } from './nodes'
 import {
   ARTICLES_QUERY,
@@ -19,11 +19,15 @@ import {
   COLLECTIONS_QUERY,
   PRODUCTS_QUERY,
   SHOP_POLICIES_QUERY,
-  PRODUCT_TYPES_QUERY
+  PRODUCT_TYPES_QUERY,
 } from './queries'
 
 export const sourceNodes = async (
-  { boundActionCreators: { createNode, touchNode, createNodeId }, store, cache },
+  {
+    boundActionCreators: { createNode, touchNode, createNodeId },
+    store,
+    cache,
+  },
   { shopName, accessToken, verbose = true },
 ) => {
   const client = createClient(shopName, accessToken)
@@ -39,7 +43,14 @@ export const sourceNodes = async (
     const imageArgs = { createNode, createNodeId, touchNode, store, cache }
 
     // Arguments used for node creation.
-    const args = { client, createNode, createNodeId, formatMsg, verbose, imageArgs }
+    const args = {
+      client,
+      createNode,
+      createNodeId,
+      formatMsg,
+      verbose,
+      imageArgs,
+    }
 
     // Message printed when fetching is complete.
     const msg = formatMsg('finished fetching data from Shopify')
