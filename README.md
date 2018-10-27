@@ -1,7 +1,5 @@
 # gatsby-source-shopify
 
-Note: This is based on the original plugin along with major fixes for localFile property of images and Gatsby V2.
-
 Source plugin for pulling data into [Gatsby][gatsby] from [Shopify][shopify]
 stores via the [Shopify Storefront API][shopify-storefront-api].
 
@@ -14,7 +12,7 @@ stores via the [Shopify Storefront API][shopify-storefront-api].
 ## Install
 
 ```sh
-npm install --save gatsby-source-shopify2
+npm install --save gatsby-source-shopify
 ```
 
 ## How to use
@@ -57,7 +55,7 @@ plugins: [
 You can query nodes created from Shopify using GraphQL like the following:
 
 **Note**: Learn to use the GraphQL tool and Ctrl+Spacebar at
-<http://localhost:3000/___graphql> to discover the types and properties of your
+<http://localhost:8000/___graphql> to discover the types and properties of your
 GraphQL model.
 
 ```graphql
