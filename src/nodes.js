@@ -1,5 +1,5 @@
 import createNodeHelpers from 'gatsby-node-helpers'
-import { tap } from 'lodash/fp'
+import { tap, camelCase } from 'lodash/fp'
 import { map } from 'p-iteration'
 import { createRemoteFileNode } from 'gatsby-source-filesystem'
 import crypto from 'crypto'
@@ -98,10 +98,7 @@ export const CollectionNode = imageArgs =>
 export const CommentNode = _imageArgs => createNodeFactory(COMMENT)
 
 export const ProductTypeNode = imageArgs => rawNode =>
-  createNodeFactory(PRODUCT_TYPE, node => {
-    node.id = node.name
-    return node
-  })({ name: rawNode })
+  createNodeFactory(PRODUCT_TYPE)({ id: camelCase(rawNode), name: rawNode })
 
 export const ProductNode = imageArgs =>
   createNodeFactory(PRODUCT, async node => {
