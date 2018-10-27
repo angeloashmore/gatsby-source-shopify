@@ -11,6 +11,7 @@ import {
   ProductOptionNode,
   ProductVariantNode,
   ShopPolicyNode,
+  ProductTypeNode
 } from './nodes'
 import {
   ARTICLES_QUERY,
@@ -18,10 +19,11 @@ import {
   COLLECTIONS_QUERY,
   PRODUCTS_QUERY,
   SHOP_POLICIES_QUERY,
+  PRODUCT_TYPES_QUERY
 } from './queries'
 
 export const sourceNodes = async (
-  { boundActionCreators: { createNode, touchNode }, store, cache },
+  { boundActionCreators: { createNode, touchNode, createNodeId }, store, cache },
   { shopName, accessToken, verbose = true },
 ) => {
   const client = createClient(shopName, accessToken)
@@ -34,10 +36,10 @@ export const sourceNodes = async (
     console.log(formatMsg('starting to fetch data from Shopify'))
 
     // Arguments used for file node creation.
-    const imageArgs = { createNode, touchNode, store, cache }
+    const imageArgs = { createNode, createNodeId, touchNode, store, cache }
 
     // Arguments used for node creation.
-    const args = { client, createNode, formatMsg, verbose, imageArgs }
+    const args = { client, createNode, createNodeId, formatMsg, verbose, imageArgs }
 
     // Message printed when fetching is complete.
     const msg = formatMsg('finished fetching data from Shopify')
@@ -52,6 +54,7 @@ export const sourceNodes = async (
       }),
       createNodes('blogs', BLOGS_QUERY, BlogNode, args),
       createNodes('collections', COLLECTIONS_QUERY, CollectionNode, args),
+      createNodes('productTypes', PRODUCT_TYPES_QUERY, ProductTypeNode, args),
       createNodes('products', PRODUCTS_QUERY, ProductNode, args, async x => {
         if (x.variants)
           await forEach(x.variants.edges, async edge =>

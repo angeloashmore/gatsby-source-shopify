@@ -207,3 +207,15 @@ export const SHOP_POLICIES_QUERY = `
     }
   }
 `
+
+export const PRODUCT_TYPES_QUERY = `
+  query GetProductTypes($first: Int!) {
+    shop {
+      productTypes(first: $first) {
+        edges {
+          node
+        }
+      }
+    }
+  }
+`

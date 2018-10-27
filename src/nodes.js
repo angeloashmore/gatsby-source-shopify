@@ -2,6 +2,7 @@ import createNodeHelpers from 'gatsby-node-helpers'
 import { tap } from 'lodash/fp'
 import { map } from 'p-iteration'
 import { createRemoteFileNode } from 'gatsby-source-filesystem'
+var crypto = require("crypto");
 
 // Node prefix
 const TYPE_PREFIX = 'Shopify'
@@ -15,14 +16,14 @@ const PRODUCT = 'Product'
 const PRODUCT_OPTION = 'ProductOption'
 const PRODUCT_VARIANT = 'ProductVariant'
 const SHOP_POLICY = 'ShopPolicy'
-
-const { createNodeFactory, generateNodeId } = createNodeHelpers({
+const PRODUCT_TYPE = 'ProductType'
+const { createNodeFactory, generateNodeId, generateTypeName } = createNodeHelpers({
   typePrefix: TYPE_PREFIX,
 })
 
 const downloadImageAndCreateFileNode = async (
   { id, url },
-  { createNode, touchNode, store, cache },
+  { createNode, createNodeId, touchNode, store, cache },
 ) => {
   let fileNodeID
 
@@ -31,11 +32,11 @@ const downloadImageAndCreateFileNode = async (
 
   if (cacheMediaData) {
     fileNodeID = cacheMediaData.fileNodeID
-    touchNode(fileNodeID)
+    touchNode({nodeId: fileNodeID})
     return fileNodeID
   }
 
-  const fileNode = await createRemoteFileNode({ url, store, cache, createNode })
+  const fileNode = await createRemoteFileNode({ url, store, cache, createNode, createNodeId })
 
   if (fileNode) {
     fileNodeID = fileNode.id
@@ -75,14 +76,29 @@ export const CollectionNode = imageArgs =>
 
     if (node.image)
       node.image.localFile___NODE = await downloadImageAndCreateFileNode(
-        { id: node.image.id, url: node.image.src },
+        { id: node.image.id, url: node.image.src && node.image.src.split("?")[0] },
         imageArgs,
-      )
-
+      );
     return node
-  })
+  });
 
 export const CommentNode = _imageArgs => createNodeFactory(COMMENT)
+export const ProductTypeNode = imageArgs => {
+  return entity => {
+    const nodeContent = entity;
+    const nodeContentDigest = crypto
+      .createHash("md5")
+      .update(nodeContent)
+      .digest("hex");
+    return ({id: generateNodeId(PRODUCT_TYPE, entity.replace(" ", "_")), name: entity, children: [],
+      parent: null,
+      internal: {
+        type: generateTypeName(PRODUCT_TYPE),
+        content: nodeContent,
+        contentDigest: nodeContentDigest
+      }});
+  }
+};
 
 export const ProductNode = imageArgs =>
   createNodeFactory(PRODUCT, async node => {
@@ -102,7 +118,7 @@ export const ProductNode = imageArgs =>
     if (node.images && node.images.edges)
       node.images = await map(node.images.edges, async edge => {
         edge.node.localFile___NODE = await downloadImageAndCreateFileNode(
-          { id: edge.node.id, url: edge.node.originalSrc },
+          { id: edge.node.id, url: edge.node.originalSrc && edge.node.originalSrc.split("?")[0] },
           imageArgs,
         )
         return edge.node
@@ -117,7 +133,7 @@ export const ProductVariantNode = imageArgs =>
   createNodeFactory(PRODUCT_VARIANT, async node => {
     if (node.image)
       node.image.localFile___NODE = await downloadImageAndCreateFileNode(
-        { id: node.image.id, url: node.image.originalSrc },
+        { id: node.image.id, url: node.image.originalSrc && node.image.originalSrc.split("?")[0]},
         imageArgs,
       )
 

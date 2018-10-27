@@ -1,5 +1,7 @@
 # gatsby-source-shopify
 
+Note: This is based on the original plugin along with major fixes for localFile property of images and Gatsby V2.
+
 Source plugin for pulling data into [Gatsby][gatsby] from [Shopify][shopify]
 stores via the [Shopify Storefront API][shopify-storefront-api].
 
@@ -12,7 +14,7 @@ stores via the [Shopify Storefront API][shopify-storefront-api].
 ## Install
 
 ```sh
-npm install --save gatsby-source-shopify
+npm install --save gatsby-source-shopify2
 ```
 
 ## How to use
