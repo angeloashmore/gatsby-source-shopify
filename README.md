@@ -1,3 +1,8 @@
+**NOTE: This repo is archived!**
+
+[`gatsby-source-shopify`][gatsby-source-shopify] has been moved to [the official
+Gatsby monorepo][gatsby-monorepo]. Please submit PRs and issues to that repo instead. Thanks!
+
 # gatsby-source-shopify
 
 Source plugin for pulling data into [Gatsby][gatsby] from [Shopify][shopify]
@@ -426,3 +431,5 @@ available.
 [graphql-inline-fragments]: http://graphql.org/learn/queries/#inline-fragments
 [gatsby-plugin-sharp]: https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby-plugin-sharp
 [gatsby-image-fragments]: https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby-image#gatsby-transformer-sharp
+[gatsby-source-shopify]: https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-source-shopify
+[gatsby-monorepo]: https://github.com/gatsbyjs/gatsby
